@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ash_go">
    <application
-        android:label="ash_go"
+        android:label="AshGO"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

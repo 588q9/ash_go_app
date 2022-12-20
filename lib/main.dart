@@ -1,11 +1,13 @@
+import 'package:ash_go/pages/index_page.dart';
+import 'package:ash_go/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const AshGOApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AshGOApp extends StatelessWidget {
+  const AshGOApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const IndexPage(),
     );
   }
 }
