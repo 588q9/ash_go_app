@@ -1,4 +1,5 @@
 import 'package:ash_go/pages/login_page.dart';
+import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,35 +11,41 @@ class IndexPage extends StatelessWidget {
       child: Scaffold(
         body: Center(
           child: Container(
+            margin: EdgeInsets.all(30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
                   child: Column(
                     children: [
+                      Text(
+                        'AshGO',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 30,
+                            color: Theme.of(context).backgroundColor),
+                      ),
                       Image(image: AssetImage("assets/images/logo.png")),
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'AshGO',
+                const Text.rich(
+                  TextSpan(children: [
+                    TextSpan(
+                      text: 'AshGO',
                       style:
                           TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
                     ),
-                    Text(
-                      ' 是一款在线即时聊天App',
+                    TextSpan(
+                      text: ' 是一款在线即时聊天App',
                       style: TextStyle(
                         color: Color.fromARGB(255, 77, 74, 74),
                         fontSize: 20,
                       ),
                     ),
-                  ],
+                  ]),
                 ),
                 Container(
-                  margin: EdgeInsets.all(30),
                   child: Column(
                     children: [
                       Row(
@@ -65,9 +72,7 @@ class IndexPage extends StatelessWidget {
                                             (states) => Colors.grey)),
                                 onPressed: () {
                                   Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return const LoginPage();
-                                  }));
+                                    LoginRoute());
                                 },
                                 child: Text('登录')),
                           ),

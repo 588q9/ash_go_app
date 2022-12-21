@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
+
+import 'overview_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage();
@@ -73,7 +75,11 @@ class LoginPage extends StatelessWidget {
                     children: [
                       Expanded(
                           child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                       Navigator.pushAndRemoveUntil(context, OverviewRoute(), (route) => false);
+                        
+
+                        },
                         child: Text('登录'),
                       ))
                     ],
