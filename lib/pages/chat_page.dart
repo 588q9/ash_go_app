@@ -5,98 +5,66 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text('前端技术'),
       ),
       body: _ChatBody(),
-
-   
     );
   }
 }
-Iterable<Widget> _messageList(){
-  List<Widget> list=[];
-for(int i=0;i<100;i++){
-list.add(Message());
+
+Iterable<Widget> _messageList() {
+  List<Widget> list = [];
+  for (int i = 0; i < 100; i++) {
+    list.add(Message());
+  }
+  return list;
 }
-return list;
-}
-class _MessageView extends StatelessWidget{
+
+class _MessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
- return ListView(
-        reverse: true,
+    return ListView(
+      reverse: true,
+      children: [..._messageList().toList()],
+    );
+  }
+}
+
+class _ChatBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [Expanded(child: _MessageView()), ChatBottomBar()],
+    );
+  }
+}
+
+class ChatBottomBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      child: Row(
         children: [
-          
-
-       
-          
-          
-       
-          ..._messageList().toList()
+          Expanded(
+            child: Icon(Icons.emoji_emotions),
+            flex: 1,
+          ),
+          Expanded(
+            flex: 8,
+            child: TextField(
+              maxLines: null,
+              decoration: InputDecoration(hintText: '发送消息'),
+            ),
+          ),
+          Expanded(child: Icon(Icons.attach_file), flex: 1),
+          Expanded(child: Icon(Icons.phone), flex: 1)
         ],
-      );
-  }
-  
-}
-
-class _ChatBody extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-Expanded(child: _MessageView())
-      ,
- ChatBottomBar()
-    ],);
-
-  }
-
-
-}
-
-class ChatBottomBar extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-  return BottomAppBar(child: 
-Row(
-  children: [
-    Expanded(
-      
-      child: Icon(Icons.emoji_emotions),flex: 1,),
-   
-        Expanded(
-    flex: 8,
-      child:   TextField(maxLines: null,
-    
-      
-    
-      decoration: InputDecoration(
-    
-      
-    
-        hintText: '发送消息'
-    
-      
-    
       ),
-    
-      
-    
-      ),
-    
-    ),
- Expanded(child: Icon(Icons.attach_file),flex: 1),
- Expanded(child: Icon(Icons.phone),flex: 1)
-
-
-  ],
-)
-
-     ,);
+    );
   }
-   
 }
+
 class Message extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -130,12 +98,9 @@ class Message extends StatelessWidget {
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 5),
-                  child: SelectableText.rich(
-                       TextSpan(
-                          children: [TextSpan(text: 'mscdfcmsc mscdfcmscmscdfcmscmscdfcmsc')
-                          ,
-                          ],
-                          style: TextStyle(color: Colors.black))),
+                  child: SelectableText.rich(TextSpan(children: [
+                    TextSpan(text: 'mscdfcmsc mscdfcmscmscdfcmscmscdfcmsc'),
+                  ], style: TextStyle(color: Colors.black))),
                 )
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
