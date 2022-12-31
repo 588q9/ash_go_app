@@ -1,0 +1,8 @@
+enum PacketType {
+  USER_LOGIN,
+  USER_REGISTER,
+  EXCEPTION,
+  PING,
+  USER_INFO,
+  COMMON_NOTICE;
+}
