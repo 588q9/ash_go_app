@@ -35,7 +35,14 @@ print('==============');
 print(tempData.readInt());
 
 print(tempData.readerIndex);
+print(tempData.getContent());
+print(tempData.capacity);
+print(tempData.compact());
+print('==============');
 
 
 
+print(tempData.writerIndex);
+print(tempData.readerIndex);
+print(tempData.getContent());
 }

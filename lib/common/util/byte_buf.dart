@@ -30,10 +30,10 @@ class ByteBuf {
   void _extendCapacity(int extendLen) {
     if (extendLen <= 0) {
       return;
-    } else if (extendLen < this.capacity - this.writerIndex - 1) {
+    } else if (extendLen < this.capacity - this.writerIndex) {
       return;
     }
-    var destLen = this.writerIndex + 1 + extendLen;
+    var destLen = this.writerIndex + extendLen;
 
     var targetLen = capacity;
     while (destLen >= targetLen) {
@@ -43,7 +43,7 @@ class ByteBuf {
     var tempData = ByteData(targetLen);
     tempData.buffer.asInt8List();
 
-    for (int i = 0; i < this.writerIndex + 1; i++) {
+    for (int i = 0; i < this.writerIndex; i++) {
       tempData.setUint8(i, this._wrap.getUint8(i));
     }
 
@@ -79,15 +79,20 @@ class ByteBuf {
   }
 
   get readableByteLength {
-    return this.writerIndex - this.readerIndex + 1;
+    return this.writerIndex - this.readerIndex;
   }
 
   ByteBuf compact() {
     if (readerIndex == 0) {
       return this;
     }
+    int leaveByteCount = this.capacity - this.readerIndex;
+    int targetLen = _initCapacity;
+    while (leaveByteCount >= targetLen) {
+      targetLen = targetLen * 2;
+    }
 
-    var temp = Uint8List(this.capacity - this.readerIndex - 1);
+    var temp = Uint8List(targetLen);
     List.copyRange(temp, 0, this._content, this.readerIndex, this.writerIndex);
 
     this._initContent(temp);
@@ -123,18 +128,20 @@ class ByteBuf {
   bool isReadableReading(int byteCount) {
     return this.readerIndex + byteCount <= this.writerIndex;
   }
-void _vaildReadableRead(int byteCount){
-if (!isReadableReading(byteCount)) {
+
+  void _vaildReadableRead(int byteCount) {
+    if (!isReadableReading(byteCount)) {
       throw RangeError('超出读取容量');
     }
-}
+  }
+
   int readBtye() {
     _vaildReadableRead(1);
     return this._wrap.getUint8(this.readerIndex++);
   }
 
   int readShort() {
-        _vaildReadableRead(2);
+    _vaildReadableRead(2);
 
     var res = this._wrap.getUint16(this.readerIndex);
     this.readerIndex = readerIndex + 2;
@@ -143,9 +150,13 @@ if (!isReadableReading(byteCount)) {
 
   int readInt() {
     _vaildReadableRead(4);
-    
+
     var res = this._wrap.getUint32(this.readerIndex);
     this.readerIndex = readerIndex + 4;
     return res;
+  }
+
+  Uint8List getContent() {
+    return this._content;
   }
 }
