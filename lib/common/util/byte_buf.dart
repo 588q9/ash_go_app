@@ -18,7 +18,7 @@ class ByteBuf {
     _extendCapacity(data.length);
 
     List.copyRange(this._content, this.writerIndex, data);
-    this.writerIndex = this.writerIndex + data.length ;
+    this.writerIndex = this.writerIndex + data.length;
 
     return this;
   }
@@ -118,5 +118,34 @@ class ByteBuf {
     }
 
     return dest;
+  }
+
+  bool isReadableReading(int byteCount) {
+    return this.readerIndex + byteCount <= this.writerIndex;
+  }
+void _vaildReadableRead(int byteCount){
+if (!isReadableReading(byteCount)) {
+      throw RangeError('超出读取容量');
+    }
+}
+  int readBtye() {
+    _vaildReadableRead(1);
+    return this._wrap.getUint8(this.readerIndex++);
+  }
+
+  int readShort() {
+        _vaildReadableRead(2);
+
+    var res = this._wrap.getUint16(this.readerIndex);
+    this.readerIndex = readerIndex + 2;
+    return res;
+  }
+
+  int readInt() {
+    _vaildReadableRead(4);
+    
+    var res = this._wrap.getUint32(this.readerIndex);
+    this.readerIndex = readerIndex + 4;
+    return res;
   }
 }
