@@ -9,10 +9,10 @@ class ByteBuf {
   int _writerIndex = 0;
   int extendFactor = 2;
 get readerIndex{
-  _readerIndex;
+ return _readerIndex;
 }
 get writerIndex{
-  _writerIndex;
+ return _writerIndex;
 }
 
 
@@ -25,15 +25,17 @@ return temp;
 }
 factory ByteBuf.build(){
 
-    var tempBytes=ByteBuf();
-var temp = Uint8List(tempBytes._initCapacity);
-
-    tempBytes._initContent(temp);
     
-        return tempBytes;
+        return ByteBuf();
 }
 
-  ByteBuf() ;
+  ByteBuf(){
+
+var temp = Uint8List(this._initCapacity);
+
+    this._initContent(temp);
+    
+  } 
 
   ByteBuf writeBytes(Uint8List data) {
     _extendCapacity(data.length);

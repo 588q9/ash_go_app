@@ -40,12 +40,12 @@ class OriginVersionLengthFieldDecoder {
     _currentContainerLength = _currentContainerLength - headerLength;
     packetLength = packetByteBuf.seekInt(preLengthField);
 
-    var has64Byte = packetLength % 64 > 0;
+    var has64Byte = packetLength / 64 > 0;
     for (int i = 0; i < packetLength; i++) {
       if (has64Byte) {
         packetByteBuf.writeLong(headerByteArray.readLong());
 
-        has64Byte = (packetLength - i - 1 - 64) % 64 > 0;
+        has64Byte = (packetLength - i - 1 - 64) / 64 > 0;
       } else {
         packetByteBuf.writeByte(headerByteArray.readBtye());
       }

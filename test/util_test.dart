@@ -12,7 +12,7 @@ data.setInt8(a, Random().nextInt(127));
 
 }
 print(byteList);
-var tempData=ByteBuf();
+var tempData=ByteBuf.build();
 
 tempData.writeBytes(byteList);
 tempData.writeBytes(byteList);
@@ -45,4 +45,7 @@ print('==============');
 print(tempData.writerIndex);
 print(tempData.readerIndex);
 print(tempData.getContent());
+
+
+print(-65/64);
 }
