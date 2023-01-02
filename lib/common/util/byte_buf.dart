@@ -5,20 +5,41 @@ class ByteBuf {
   late Uint8List _content;
 
   late ByteData _wrap;
-  int readerIndex = 0;
-  int writerIndex = 0;
+  int _readerIndex = 0;
+  int _writerIndex = 0;
   int extendFactor = 2;
-  ByteBuf() {
-    var temp = Uint8List(_initCapacity);
+get readerIndex{
+  _readerIndex;
+}
+get writerIndex{
+  _writerIndex;
+}
 
-    this._initContent(temp);
-  }
+
+factory ByteBuf.wrap(Uint8List data){
+var temp= ByteBuf();
+temp._initContent(data);
+temp._writerIndex=data.length;
+
+return temp;
+}
+factory ByteBuf.build(){
+
+    var tempBytes=ByteBuf();
+var temp = Uint8List(tempBytes._initCapacity);
+
+    tempBytes._initContent(temp);
+    
+        return tempBytes;
+}
+
+  ByteBuf() ;
 
   ByteBuf writeBytes(Uint8List data) {
     _extendCapacity(data.length);
 
     List.copyRange(this._content, this.writerIndex, data);
-    this.writerIndex = this.writerIndex + data.length;
+    this._writerIndex = this.writerIndex + data.length;
 
     return this;
   }
@@ -54,28 +75,33 @@ class ByteBuf {
   ByteBuf writeShort(int short) {
     _extendCapacity(2);
     this._wrap.setUint16(this.writerIndex, short);
-    this.writerIndex = this.writerIndex + 2;
+    this._writerIndex = this.writerIndex + 2;
     return this;
   }
 
   ByteBuf writeInt(int integer) {
     _extendCapacity(4);
     this._wrap.setUint32(this.writerIndex, integer);
-    this.writerIndex = this.writerIndex + 4;
+    this._writerIndex = this.writerIndex + 4;
     return this;
   }
-
+  ByteBuf writeLong(int integer) {
+    _extendCapacity(8);
+    this._wrap.setUint64(this.writerIndex, integer);
+    this._writerIndex = this.writerIndex + 8;
+    return this;
+  }
   ByteBuf writeByte(int byte) {
     _extendCapacity(1);
 
-    this._wrap.setInt8(this.writerIndex++, byte);
+    this._wrap.setUint8(this._writerIndex++, byte);
     return this;
   }
 
   void clear() {
     this._initContent(Uint8List(this._initCapacity));
-    this.readerIndex = 0;
-    this.writerIndex = 0;
+    this._readerIndex = 0;
+    this._writerIndex = 0;
   }
 
   get readableByteLength {
@@ -97,13 +123,13 @@ class ByteBuf {
 
     this._initContent(temp);
 
-    this.writerIndex = this.writerIndex - this.readerIndex;
-    this.readerIndex = 0;
+    this._writerIndex = this.writerIndex - this.readerIndex;
+    this._readerIndex = 0;
     return this;
   }
 
-  void _initContent(_newContent) {
-    this._content = _newContent;
+  void _initContent(newContent) {
+    this._content = newContent;
     this._wrap = this._content.buffer.asByteData();
   }
 
@@ -119,7 +145,7 @@ class ByteBuf {
 
   Uint8List takeBytesToDestArray(Uint8List dest, int length) {
     for (int i = 0; i < length; i++) {
-      dest[i] = this._content[this.readerIndex++];
+      dest[i] = this._content[this._readerIndex++];
     }
 
     return dest;
@@ -137,26 +163,37 @@ class ByteBuf {
 
   int readBtye() {
     _vaildReadableRead(1);
-    return this._wrap.getUint8(this.readerIndex++);
+    return this._wrap.getUint8(this._readerIndex++);
   }
 
   int readShort() {
     _vaildReadableRead(2);
 
     var res = this._wrap.getUint16(this.readerIndex);
-    this.readerIndex = readerIndex + 2;
+    this._readerIndex = readerIndex + 2;
     return res;
   }
+  int readLong() {
+    _vaildReadableRead(8);
 
+    var res = this._wrap.getUint32(this.readerIndex);
+    this._readerIndex = readerIndex + 8;
+    return res;
+  }
   int readInt() {
     _vaildReadableRead(4);
 
     var res = this._wrap.getUint32(this.readerIndex);
-    this.readerIndex = readerIndex + 4;
+    this._readerIndex = readerIndex + 4;
     return res;
   }
 
   Uint8List getContent() {
     return this._content;
   }
+
+int seekInt(int offset){
+  return _wrap.getUint32(offset);
+}
+
 }

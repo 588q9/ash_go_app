@@ -1,3 +1,3 @@
-class Frame{
+abstract class Frame{
   
 }
