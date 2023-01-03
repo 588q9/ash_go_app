@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'dart:math';
+
 import 'dart:typed_data';
 
 import 'package:ash_go/client/packet/origin_version_packet.dart';
 import 'package:ash_go/client/packet/packet.dart';
-import 'package:ash_go/common/protocol/frame/client_frame.dart';
+import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/util/byte_buf.dart';
-import 'package:ash_go/common/util/origin_version_length_field_decoder.dart';
+import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
 
 class ChannelManager {
   Socket? channel;
   String host = "192.168.1.104";
-  OriginVersionLengthFieldDecoder lengthFieldDecoder =
+  final OriginVersionLengthFieldDecoder lengthFieldDecoder =
       OriginVersionLengthFieldDecoder(
           0x7fffffff,
           Packet.MAGIC_NUMBER +
@@ -30,14 +30,13 @@ class ChannelManager {
       return value;
     }).then((value) {
       value.listen((event) {
-      lengthFieldDecoder.collecting(event);
-      
+        lengthFieldDecoder.collecting(event);
       });
     });
   }
 
   void send(ClientFrame frame) {}
   get isConnected {
-    channel != null;
+    return channel != null;
   }
 }
