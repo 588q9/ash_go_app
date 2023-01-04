@@ -11,7 +11,7 @@ import 'package:ash_go/common/util/byte_buf.dart';
 import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
 import 'package:ash_go/common/util/json_serializer_util.dart';
 import 'package:ash_go/common/util/serializer_util.dart';
-
+typedef Connected=void Function(ChannelManager channelManager);
 class ChannelManager {
   Socket? _channel;
   String host = "192.168.1.104";
@@ -20,7 +20,7 @@ class ChannelManager {
   final OriginVersionLengthFieldDecoder _lengthFieldDecoder =
       OriginVersionLengthFieldDecoder(
           0x7fffffff,
-          Packet.MAGIC_NUMBER +
+          Packet.MAGIC_NUMBER_FIELD_LENGTH +
               Packet.VERSION_FIELD_LENGTH +
               OriginVersionPacket.TYPE_FIELD_LENGTH,
           lengthField: OriginVersionPacket.LENGTH_FIELD_LENGTH,
@@ -28,10 +28,10 @@ class ChannelManager {
               OriginVersionPacket.SERIALIZE_TYPE_FIELD_LENGTH);
   int port = 8896;
 
-  ChannelManager(void connected(ChannelManager channelManager)) {
+  ChannelManager([Connected? connected]) {
     Socket.connect(host, port).then((value) {
       _channel = value;
-      connected(this);
+       connected?.call(this);
 
       return value;
     }).then((value) {
@@ -69,6 +69,9 @@ class SeriesIdInteger {
   SeriesIdInteger(this._value);
 
   int getAndIncrement() {
-    return (_value++) % ALONE_PACKET_SERIES_ID;
+    var temp=_value;
+     _value=(++_value) % ALONE_PACKET_SERIES_ID;
+return temp;
+
   }
 }

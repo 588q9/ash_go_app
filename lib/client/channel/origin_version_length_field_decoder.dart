@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ash_go/common/util/byte_buf.dart';
+import 'package:ash_go/common/util/json_serializer_util.dart';
 
 //注意线程不安全
 class OriginVersionLengthFieldDecoder {
@@ -20,9 +22,11 @@ class OriginVersionLengthFieldDecoder {
   OriginVersionLengthFieldDecoder(this.maxPacketLength, this.preLengthField,
       {this.lengthField = 4, required this.postLengthField}) {
     headerLength = preLengthField + lengthField + postLengthField;
+  
   }
 
   void collecting(Uint8List data) {
+   
     _bytesContainer.add(ByteBuf.wrap(data));
     _currentContainerLength = _currentContainerLength + data.length;
     this._decode();
@@ -34,6 +38,8 @@ class OriginVersionLengthFieldDecoder {
 
     if (_currentDecodePacketLength == 0) {
       if (_currentContainerLength < headerLength) {
+  
+
         return;
       }
 
@@ -56,10 +62,11 @@ class OriginVersionLengthFieldDecoder {
     if (_currentContainerLength < _currentDecodePacketLength) {
       return;
     }
+
     var packetLength = _currentDecodePacketLength;
     var has8Byte = (_currentDecodePacketLength / 8).floor() > 0 &&
         headerByteArray.isReadableReading(8);
-    for (; _currentDecodePacketLength > 0;) {
+    for (; packetLength > 0;) {
       if (has8Byte) {
         packetByteBuf.writeLong(headerByteArray.readLong());
         packetLength = packetLength - 8;
@@ -67,18 +74,37 @@ class OriginVersionLengthFieldDecoder {
         has8Byte = ((packetLength) / 8).floor() > 0 &&
             headerByteArray.isReadableReading(8);
       } else {
+       
         packetByteBuf.writeByte(headerByteArray.readBtye());
         packetLength = packetLength - 1;
       }
 
       if (!headerByteArray.isReadableReading(1)) {
         _bytesContainer.removeAt(0);
-        headerByteArray = _bytesContainer[_headerReaderIndex];
+     
+        
       }
     }
-    _currentContainerLength = _currentContainerLength - packetLength;
+    _currentContainerLength = _currentContainerLength - _currentDecodePacketLength;
+
     _currentDecodePacketLength = 0;
-    print(resultPackets.last);
+   
+ var tempBytes= resultPackets.last.takeBytes();
+
+ tempBytes=Uint8List.sublistView(tempBytes,headerLength);
+print(tempBytes);
+
+    print(utf8.decode(tempBytes));
+
+
     resultPackets.add(ByteBuf());
+    print('$_currentContainerLength ');
+   if(_currentContainerLength>=headerLength){
+_decode();
+
+   } 
+
+    
+
   }
 }

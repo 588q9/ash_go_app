@@ -7,8 +7,8 @@ part 'ping_client_frame.g.dart';
 @JsonSerializable()
 
 class PingClientFrame extends ClientFrame{
-String message;
-
+String? message;
+static const PACKET_TYPE=PacketType.PING;
 PingClientFrame({this.message='ping'});
 
 factory PingClientFrame.fromJson(Map<String, dynamic> json) => _$PingClientFrameFromJson(json);
@@ -17,7 +17,7 @@ factory PingClientFrame.fromJson(Map<String, dynamic> json) => _$PingClientFrame
   
   @override
   PacketType getPacketType() {
-  return PacketType.PING;
+  return PACKET_TYPE;
   }
 
   

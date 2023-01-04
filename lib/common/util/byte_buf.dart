@@ -177,7 +177,7 @@ class ByteBuf {
   int readLong() {
     _vaildReadableRead(8);
 
-    var res = this._wrap.getUint32(this.readerIndex);
+    var res = this._wrap.getUint64(this.readerIndex);
     this._readerIndex = readerIndex + 8;
     return res;
   }

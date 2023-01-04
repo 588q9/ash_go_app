@@ -9,7 +9,12 @@ import 'package:ash_go/common/util/byte_buf.dart';
 void main(){
 channel_test1();
 }
+void safety_test1(){
+var list=<int?>[null];
 
+list[0]!.isNaN;
+
+}
 void bytebuf_test1(){
 ByteData data= ByteData(128);
 var byteList=data.buffer.asUint8List();
@@ -18,6 +23,8 @@ for(int a=0;a<128;a++){
 data.setInt8(a, Random().nextInt(127));
 
 }
+
+
 print(byteList);
 var tempData=ByteBuf.build();
 
@@ -59,7 +66,7 @@ print( (65/64));
 void channel_test1(){
 ChannelManager channelManager=ChannelManager((value){
 value.send(
-  PingClientFrame(message: 'sadxasxd')
+  PingClientFrame(message: '挖苦挖空')
   , SeriesIdInteger.ALONE_PACKET_SERIES_ID, SerializeType.JSON_SERIAL);
 
 

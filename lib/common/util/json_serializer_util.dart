@@ -8,9 +8,9 @@ import 'package:ash_go/common/util/serializer_util.dart';
 typedef DeserializerHandler = Function(Map<String, dynamic> data);
 
 class JsonSerializerUtil extends SerializerUtil<JsonSerializable> {
-  static final Map<PacketType, DeserializerHandler>
-      _packetTypeDeserializerMapping = {
-    PacketType.PING: PingClientFrame.fromJson
+  static  const Map<PacketType, DeserializerHandler>
+      _packetTypeDeserializerMapping ={
+    PingClientFrame.PACKET_TYPE: PingClientFrame.fromJson
   };
 
 const JsonSerializerUtil();
