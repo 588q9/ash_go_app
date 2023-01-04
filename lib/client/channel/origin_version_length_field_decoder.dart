@@ -6,10 +6,10 @@ import 'package:ash_go/common/util/byte_buf.dart';
 class OriginVersionLengthFieldDecoder {
   final List<ByteBuf> _bytesContainer = [];
   int _currentContainerLength = 0;
-  int maxPacketLength;
-  int preLengthField;
-  int lengthField;
-  int postLengthField;
+ final int maxPacketLength;
+ final int preLengthField;
+ final int lengthField;
+ final int postLengthField;
   int _headerReaderIndex = 0;
   int _headerReaderArrayIndex = 0;
   int _currentDecodePacketLength = 0;
@@ -78,6 +78,7 @@ class OriginVersionLengthFieldDecoder {
     }
     _currentContainerLength = _currentContainerLength - packetLength;
     _currentDecodePacketLength = 0;
+    print(resultPackets.last);
     resultPackets.add(ByteBuf());
   }
 }

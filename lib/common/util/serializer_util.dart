@@ -4,6 +4,7 @@ import 'package:ash_go/common/protocol/enums/packet_type.dart';
 
 
 abstract class  SerializerUtil<T>{
+const SerializerUtil();
 
 Uint8List serializer(T src);
 

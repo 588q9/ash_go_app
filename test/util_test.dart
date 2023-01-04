@@ -1,9 +1,16 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:ash_go/client/channel/channel_manager.dart';
+import 'package:ash_go/common/protocol/enums/serialize_type.dart';
+import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
 import 'package:ash_go/common/util/byte_buf.dart';
 
 void main(){
+channel_test1();
+}
+
+void bytebuf_test1(){
 ByteData data= ByteData(128);
 var byteList=data.buffer.asUint8List();
 data.setInt8(0, 12);
@@ -48,4 +55,14 @@ print(tempData.getContent());
 
 
 print( (65/64));
+}
+void channel_test1(){
+ChannelManager channelManager=ChannelManager((value){
+value.send(
+  PingClientFrame(message: 'sadxasxd')
+  , SeriesIdInteger.ALONE_PACKET_SERIES_ID, SerializeType.JSON_SERIAL);
+
+
+});
+
 }

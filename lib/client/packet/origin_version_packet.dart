@@ -9,7 +9,7 @@ class OriginVersionPacket extends Packet {
 
   static final int LENGTH_FIELD_LENGTH = 4;
 
-final ProtocolVersion  version=ProtocolVersion.VERSION_1;
+static final ProtocolVersion  VERSION=ProtocolVersion.VERSION_1;
 
   static final int SERIALIZE_TYPE_FIELD_LENGTH = 1;
 

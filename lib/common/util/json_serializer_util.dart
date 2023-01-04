@@ -13,6 +13,8 @@ class JsonSerializerUtil extends SerializerUtil<JsonSerializable> {
     PacketType.PING: PingClientFrame.fromJson
   };
 
+const JsonSerializerUtil();
+
   @override
   dynamic deserializer(Uint8List data, PacketType type) {
     Map<String, dynamic> obj = jsonDecode(utf8.decode(data));

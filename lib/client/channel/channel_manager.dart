@@ -1,17 +1,23 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'dart:typed_data';
 
 import 'package:ash_go/client/packet/origin_version_packet.dart';
 import 'package:ash_go/client/packet/packet.dart';
+import 'package:ash_go/common/protocol/enums/serialize_type.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/util/byte_buf.dart';
 import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
+import 'package:ash_go/common/util/json_serializer_util.dart';
+import 'package:ash_go/common/util/serializer_util.dart';
 
 class ChannelManager {
-  Socket? channel;
+  Socket? _channel;
   String host = "192.168.1.104";
-  final OriginVersionLengthFieldDecoder lengthFieldDecoder =
+  var _serializerUtil = const JsonSerializerUtil();
+  final _seriesIds = SeriesIdInteger(0);
+  final OriginVersionLengthFieldDecoder _lengthFieldDecoder =
       OriginVersionLengthFieldDecoder(
           0x7fffffff,
           Packet.MAGIC_NUMBER +
@@ -22,21 +28,47 @@ class ChannelManager {
               OriginVersionPacket.SERIALIZE_TYPE_FIELD_LENGTH);
   int port = 8896;
 
-  ChannelManager(void connected()) {
+  ChannelManager(void connected(ChannelManager channelManager)) {
     Socket.connect(host, port).then((value) {
-      channel = value;
-      connected();
+      _channel = value;
+      connected(this);
 
       return value;
     }).then((value) {
       value.listen((event) {
-        lengthFieldDecoder.collecting(event);
+        _lengthFieldDecoder.collecting(event);
       });
     });
   }
+String getReceive(){
+return utf8.decode(_lengthFieldDecoder.resultPackets[_lengthFieldDecoder.resultPackets.length-1].takeBytes()); 
 
-  void send(ClientFrame frame) {}
+}
+  void send(ClientFrame frame, int seriesId, SerializeType serializeType) {
+    var contentData = _serializerUtil.serializer(frame);
+    ByteBuf sendData = ByteBuf();
+    sendData.writeInt(Packet.MAGIC_NUMBER);
+    sendData.writeByte(OriginVersionPacket.VERSION.index);
+    sendData.writeShort(frame.getPacketType().index);
+    sendData.writeInt(contentData.length);
+    sendData.writeByte(serializeType.index);
+    sendData.writeInt(seriesId);
+
+    sendData.writeBytes(contentData);
+    _channel!.add(sendData.takeBytes());
+  }
+
   get isConnected {
-    return channel != null;
+    return _channel != null;
+  }
+}
+
+class SeriesIdInteger {
+  int _value;
+  static const ALONE_PACKET_SERIES_ID = 0x7fffffff;
+  SeriesIdInteger(this._value);
+
+  int getAndIncrement() {
+    return (_value++) % ALONE_PACKET_SERIES_ID;
   }
 }
