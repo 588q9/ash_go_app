@@ -60,7 +60,6 @@ void bytebuf_test1() {
 
 void channel_test1() {
   ChannelManager channelManager = ChannelManager((value) {
-    value.send(PingClientFrame(message: '挖苦挖空'),
-        SeriesIdInteger.ALONE_PACKET_SERIES_ID, SerializeType.JSON_SERIAL);
+    value.send(PingClientFrame(message: '挖苦挖空'));
   });
 }

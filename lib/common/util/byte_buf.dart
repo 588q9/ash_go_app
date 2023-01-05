@@ -17,20 +17,28 @@ class ByteBuf {
   }
 
   factory ByteBuf.wrap(Uint8List data) {
-    var temp = ByteBuf();
-    temp._initContent(data);
-    temp._writerIndex = data.length;
+    var temp = ByteBuf(data);
 
     return temp;
   }
   factory ByteBuf.build() {
+    
     return ByteBuf();
   }
 
-  ByteBuf() {
-    var temp = Uint8List(this._initCapacity);
+  ByteBuf([Uint8List? data]) {
+if(data==null){
+var temp = Uint8List(this._initCapacity);
 
     this._initContent(temp);
+return;
+}
+
+    this._initContent(data);
+    this._writerIndex = data.length;
+
+    
+
   }
 
   ByteBuf writeBytes(Uint8List data) {

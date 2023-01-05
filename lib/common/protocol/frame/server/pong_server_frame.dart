@@ -3,9 +3,10 @@ import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'pong_server_frame.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class PongServerFrame extends ServerFrame {
-  String? message;
+  String message;
+  static const PACKET_TYPE = PacketType.PING;
 
   PongServerFrame({this.message = 'pong'});
 
@@ -16,6 +17,11 @@ class PongServerFrame extends ServerFrame {
 
   @override
   PacketType getPacketType() {
-    return PacketType.PING;
+    return PACKET_TYPE;
+  }
+
+  @override
+  String toString() {
+    return message;
   }
 }
