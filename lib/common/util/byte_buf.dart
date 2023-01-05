@@ -157,6 +157,7 @@ class ByteBuf {
 
   void _vaildReadableRead(int byteCount) {
     if (!isReadableReading(byteCount)) {
+
       throw RangeError('超出读取容量');
     }
   }

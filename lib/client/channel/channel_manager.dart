@@ -11,15 +11,17 @@ import 'package:ash_go/common/util/byte_buf.dart';
 import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
 import 'package:ash_go/common/util/json_serializer_util.dart';
 import 'package:ash_go/common/util/serializer_util.dart';
-typedef Connected=void Function(ChannelManager channelManager);
+
+typedef Connected = void Function(ChannelManager channelManager);
+
 class ChannelManager {
   Socket? _channel;
   String host = "192.168.1.104";
-  var _serializerUtil = const JsonSerializerUtil();
+  final _serializerUtil = const JsonSerializerUtil();
   final _seriesIds = SeriesIdInteger(0);
   final OriginVersionLengthFieldDecoder _lengthFieldDecoder =
       OriginVersionLengthFieldDecoder(
-          0x7fffffff,
+          OriginVersionPacket.PACKET_MAX_LENGTH,
           Packet.MAGIC_NUMBER_FIELD_LENGTH +
               Packet.VERSION_FIELD_LENGTH +
               OriginVersionPacket.TYPE_FIELD_LENGTH,
@@ -31,7 +33,7 @@ class ChannelManager {
   ChannelManager([Connected? connected]) {
     Socket.connect(host, port).then((value) {
       _channel = value;
-       connected?.call(this);
+      connected?.call(this);
 
       return value;
     }).then((value) {
@@ -40,10 +42,13 @@ class ChannelManager {
       });
     });
   }
-String getReceive(){
-return utf8.decode(_lengthFieldDecoder.resultPackets[_lengthFieldDecoder.resultPackets.length-1].takeBytes()); 
+  String getReceive() {
+    return utf8.decode(_lengthFieldDecoder
+        .resultPackets[_lengthFieldDecoder.resultPackets.length - 1]
+        .takeBytes());
+  }
 
-}
+//TODO 应当把Packet封装加上，此处作为简化直接从frame写入byte数组
   void send(ClientFrame frame, int seriesId, SerializeType serializeType) {
     var contentData = _serializerUtil.serializer(frame);
     ByteBuf sendData = ByteBuf();
@@ -69,9 +74,8 @@ class SeriesIdInteger {
   SeriesIdInteger(this._value);
 
   int getAndIncrement() {
-    var temp=_value;
-     _value=(++_value) % ALONE_PACKET_SERIES_ID;
-return temp;
-
+    var temp = _value;
+    _value = (++_value) % ALONE_PACKET_SERIES_ID;
+    return temp;
   }
 }

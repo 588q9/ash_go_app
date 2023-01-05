@@ -14,7 +14,7 @@ static final ProtocolVersion  VERSION=ProtocolVersion.VERSION_1;
   static final int SERIALIZE_TYPE_FIELD_LENGTH = 1;
 
   static final int SERIES_ID_FIELD_LENGTH = 4;
-
+static final int PACKET_MAX_LENGTH=0x7fffffff;
   static final int HEADER_LENGTH = Packet.MAGIC_NUMBER_FIELD_LENGTH +
       Packet.VERSION_FIELD_LENGTH +
       TYPE_FIELD_LENGTH +
