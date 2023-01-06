@@ -20,7 +20,10 @@ const JsonSerializerUtil();
 
   @override
   ServerFrame deserializer(Uint8List data, PacketType type) {
-    Map<String, dynamic> obj = jsonDecode(utf8.decode(data));
+    var jsonStr=utf8.decode(data);
+
+
+    Map<String, dynamic> obj = jsonDecode(jsonStr);
 
     return _packetTypeDeserializerMapping[type]!.call(obj);
   }

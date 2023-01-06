@@ -58,8 +58,13 @@ void bytebuf_test1() {
   print((65 / 64));
 }
 
-void channel_test1() {
+void channel_test1(){
   ChannelManager channelManager = ChannelManager((value) {
-    value.send(PingClientFrame(message: '挖苦挖空'));
+    value
+        .send(PingClientFrame())
+        .then((value) {
+          print('koapkxa');
+      print(value);
+    });
   });
 }
