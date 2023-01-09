@@ -65,14 +65,14 @@ void channel_test1(){
 //           print('koapkxa');
 //       print(value);
 //     });
-channelManager.send(PingClientFrame(message: 'mams')).then((value) {
-print(value);
+// channelManager.send(PingClientFrame(message: 'mams')).then((value) {
+// print(value);
 
-});
-channelManager.send(PingClientFrame(message: 'mamws')).then((value) {
-print(value);
+// });
+// channelManager.send(PingClientFrame(message: 'mamws')).then((value) {
+// print(value);
 
-});
+// });
 
 
 }
