@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'dart:typed_data';
 
@@ -11,7 +12,6 @@ import 'package:ash_go/common/protocol/enums/protocol_version.dart';
 import 'package:ash_go/common/protocol/enums/serialize_type.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
-import 'package:ash_go/common/protocol/frame/server/pong_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:ash_go/common/util/byte_buf.dart';
 import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
@@ -35,7 +35,8 @@ class ChannelManager {
           postLengthField: OriginVersionPacket.SERIES_ID_FIELD_LENGTH +
               OriginVersionPacket.SERIALIZE_TYPE_FIELD_LENGTH);
   int port = 8896;
-
+  final Completer _connectState = Completer();
+  //TODO 超时丢弃，并且报超时错误给future
   final serverMap = <int, Completer<ServerFrame>>{};
   //TODO 需要寻找正确的服务端推送消息处理器
   final serverPush = <ServerFrame>[];
@@ -55,6 +56,7 @@ class ChannelManager {
     var serverFrame = _serializerUtil.deserializer(jsonBytes, type);
 
     serverFrame.seriesId = seriesId;
+
     return serverFrame;
   }
 
@@ -62,8 +64,8 @@ class ChannelManager {
     _lengthFieldDecoder.packetProcess = (ByteBuf buf) {
       var serverFrame = buildServerFrame(buf);
       if (serverFrame.seriesId == SeriesIdInteger.ALONE_PACKET_SERIES_ID) {
-        //TODO 需要寻找正确的服务端推送消息处理器
-    print('server push,store to list');
+        //TODO 需要寻找正确的服务端推送消息处理器考虑使用StreamTransformer或StreamController
+        print('server push,store to list');
 
         serverPush.add(serverFrame);
         print(serverPush);
@@ -76,6 +78,7 @@ class ChannelManager {
 
     Socket.connect(host, port).then((value) {
       _channel = value;
+      _connectState.complete();
       connected?.call(this);
       _sendPingtimer = Timer.periodic(const Duration(seconds: 60), (timer) {
         send(PingClientFrame()).then((value) {
@@ -86,12 +89,17 @@ class ChannelManager {
       return value;
     }).then((value) {
       value.listen((event) {
+
         _lengthFieldDecoder.collecting(event);
       });
+    }).onError((error, stackTrace) {
+      _connectState.completeError(error!);
     });
   }
 
   void sendSingleSide(ClientFrame frame) async {
+    await _connectState.future;
+
     print('client push...');
     _send(frame);
   }
@@ -111,11 +119,14 @@ class ChannelManager {
   }
 
   Future<ServerFrame> send(ClientFrame frame) async {
-    var seriesId = _send(frame, seriesIds.getAndIncrement());
+    await _connectState.future;
 
-    var serverFameCompleter = Completer<ServerFrame>();
-    serverMap[seriesId] = serverFameCompleter;
-    return serverFameCompleter.future;
+    var seriesId = _send(frame, seriesIds.getAndIncrement());
+frame.seriesId=seriesId;
+    var serverFrameCompleter = Completer<ServerFrame>();
+    serverMap[seriesId] = serverFrameCompleter;
+
+    return serverFrameCompleter.future;
   }
 
   ByteBuf buildPakcet(Uint8List contentData, PacketType packetType,
@@ -161,4 +172,6 @@ class SeriesIdInteger {
     _value = (++_value) % ALONE_PACKET_SERIES_ID;
     return temp;
   }
+
+
 }

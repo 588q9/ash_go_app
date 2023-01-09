@@ -1,10 +1,56 @@
 import 'dart:async';
+import 'dart:isolate';
+
+import 'package:ash_go/client/channel/channel_manager.dart';
+import 'package:ash_go/client/connect_client.dart';
+import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
 
 void main(){
-  async_test();
-timer_test();
+//   async_test();
+// timer_test();
+// isolate_test();
+client_test();
+}
+
+client_test(){
+
+ConnectClient connectClient=ConnectClient();
+connectClient.send(PingClientFrame(message: 'isolate wait ping')).then((value) {
+print("isolate wait test");
+print(value);
+print('---------------');
+
+});
+connectClient.send(PingClientFrame(message: 'isolate ping')).then((value) {
+print("isolate test ping");
+print(value);
+
+});
 
 }
+
+
+isolate_test(){
+
+
+
+var manager;
+var r1=ReceivePort();
+print('${Isolate.current.debugName}');
+
+Isolate.spawn((message) {
+print('${Isolate.current.debugName}');
+
+ ChannelManager channelManager = ChannelManager();
+manager=channelManager;
+
+
+ }, r1.sendPort,debugName: 'connect');
+
+
+}
+
+
 future_test(){
 var completer=Completer();
 var future=completer.future.then((value) {print('dxjaoxdjapoxdka');

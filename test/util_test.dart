@@ -59,12 +59,20 @@ void bytebuf_test1() {
 }
 
 void channel_test1(){
-  ChannelManager channelManager = ChannelManager((value) {
-    value
-        .send(PingClientFrame())
-        .then((value) {
-          print('koapkxa');
-      print(value);
-    });
-  });
+  ChannelManager channelManager = ChannelManager();
+// channelManager.send(PingClientFrame())
+//         .then((value) {
+//           print('koapkxa');
+//       print(value);
+//     });
+channelManager.send(PingClientFrame(message: 'mams')).then((value) {
+print(value);
+
+});
+channelManager.send(PingClientFrame(message: 'mamws')).then((value) {
+print(value);
+
+});
+
+
 }
