@@ -1,7 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
+  const ChatPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,10 +75,14 @@ class Message extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
-          ),
+          GestureDetector(
+              onTap: () {
+                Navigator.push(context, UserPageRoute());
+              },
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+              )),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Column(

@@ -14,7 +14,7 @@ class IsolateClient {
   late SendPort _sendMain;
 
   final Completer<SendPort> _sendRunningFuture = Completer();
-  // late StreamQueue<dynamic> _events;
+ 
   final seriesIds = SeriesIdInteger(0);
 
   //TODO 超时丢弃，并且报超时错误给future
@@ -79,22 +79,24 @@ class IsolateClient {
     return completer.future;
   }
 }
-//TODO 考虑将_run方法做成reactor模型，轮流对channelmanager进行发送
+//TODO 考虑将_run方法做成多isolate多channelmanager轮流使用或者的模型，切换isolate轮流对channelmanager进行发送
 
 void _run(List<SendPort> sendMain) async {
   ChannelManager manager = ChannelManager();
   ReceivePort receiveRunning = ReceivePort();
   sendMain[0].send(receiveRunning.sendPort);
-  var runningEvents = StreamQueue(receiveRunning);
 
+  var runningEvents = StreamQueue(receiveRunning);
+  sendMain.removeAt(0);
   while (true) {
+    //TODO 处理异常情况
     var clientFrame = await runningEvents.next;
 
     manager.send(clientFrame);
     var serverFrameFuture = manager.serverFrameQueue.next;
 
     serverFrameFuture.then((value) {
-      sendMain[1].send(value);
+      sendMain[0].send(value);
     });
   }
 }

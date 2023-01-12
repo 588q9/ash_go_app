@@ -1,6 +1,10 @@
 # ash_go
+通信客户端
 
-A new Flutter project.
+设计与实现了一个基于dart事件循环的异步多线程(isolate)socket客户端，实现了对tcp流的tlv解码与控制一组字节的读取与写入
+
+
+
 
 ## Getting Started
 

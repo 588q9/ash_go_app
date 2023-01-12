@@ -7,6 +7,7 @@ import 'package:ash_go/common/util/json_serializer_util.dart';
 typedef PacketCallback = void Function(ByteBuf packet);
 
 //注意线程不安全
+//TODO 将Packet和Frame的封装行为抽取出来
 class OriginVersionLengthFieldDecoder {
   final List<ByteBuf> _bytesContainer = [];
   int _currentContainerLength = 0;

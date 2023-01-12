@@ -1,17 +1,12 @@
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/pages/overview_page.dart';
+import 'package:ash_go/pages/user_page.dart';
 import 'package:flutter/material.dart';
 
 import '../pages/chat_page.dart';
 import '../pages/index_page.dart';
 
-
-
-
 class LoginRoute extends MaterialPageRoute {
-
-
-
   LoginRoute()
       : super(builder: (context) {
           return LoginPage();
@@ -24,6 +19,7 @@ class IndexRoute extends MaterialPageRoute {
           return IndexPage();
         });
 }
+
 class OverviewRoute extends MaterialPageRoute {
   OverviewRoute()
       : super(builder: (context) {
@@ -31,9 +27,16 @@ class OverviewRoute extends MaterialPageRoute {
         });
 }
 
-class ChatPageRoute extends MaterialPageRoute{
-  ChatPageRoute():super(builder:(context){
-return ChatPage();
-  });
-  
+class ChatPageRoute extends MaterialPageRoute {
+  ChatPageRoute()
+      : super(builder: (context) {
+          return ChatPage();
+        });
+}
+
+class UserPageRoute extends MaterialPageRoute {
+  UserPageRoute()
+      : super(builder: (context) {
+          return UserPage();
+        });
 }

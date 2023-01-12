@@ -2,6 +2,8 @@ import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
 class DrawerButton extends StatelessWidget {
+  const DrawerButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -31,25 +33,23 @@ class OverviewPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-width: 60,height: 60
-,
-
+                    width: 60,
+                    height: 60,
                     child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
-                      ),
-                  )
-                  ,Padding(
+                      backgroundImage: NetworkImage(
+                          'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.only(top: 16),
-                    child: Text('type1',style: TextStyle(
-color: Colors.white,fontSize: 16
-
-                    ),),
+                    child: Text(
+                      'type1',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
                   )
                 ],
               ),
             ),
-            
           ],
         ),
       ),

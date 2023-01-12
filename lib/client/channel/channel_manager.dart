@@ -22,6 +22,8 @@ class ChannelManager {
   Socket? _channel;
 
   String host = "192.168.1.104";
+  int port = 8896;
+
   final _serializerUtil = const JsonSerializerUtil();
 
   final OriginVersionLengthFieldDecoder _lengthFieldDecoder =
@@ -33,7 +35,6 @@ class ChannelManager {
           lengthField: OriginVersionPacket.LENGTH_FIELD_LENGTH,
           postLengthField: OriginVersionPacket.SERIES_ID_FIELD_LENGTH +
               OriginVersionPacket.SERIALIZE_TYPE_FIELD_LENGTH);
-  int port = 8896;
   final Completer _connectState = Completer();
 
   final serverFrameController = StreamController<ServerFrame>();
