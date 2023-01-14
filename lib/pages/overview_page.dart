@@ -78,8 +78,8 @@ class ChatItem extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.all(10),
         leading: Container(
-          width: 55,
-          height: 55,
+          width: 50,
+          height: 50,
           child: CircleAvatar(
             backgroundImage: NetworkImage(
                 'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
@@ -111,16 +111,19 @@ class ChatItem extends StatelessWidget {
             ),
             Column(
               children: [
-                Text(style: TextStyle(color: Colors.grey), '15:56'),
+                Text(
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  '15:56',
+                ),
                 Container(
                   padding: EdgeInsets.all(4),
                   child: Text(
                     '155',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(fontSize: 12, color: Colors.white),
                   ),
                   decoration: BoxDecoration(
                       color: Color.fromARGB(255, 187, 187, 187),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
                 )
               ],
             )

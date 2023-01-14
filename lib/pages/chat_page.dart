@@ -8,7 +8,45 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('前端技术'),
+
+        actions: [PopupMenuButton(
+          onSelected: (value) {
+            if(value==1){
+            Navigator.push(context, GroupInfoPageRoute());
+
+            }
+
+          },
+          itemBuilder: (context){
+return [
+PopupMenuItem(child: Text('群聊信息'),value: 1,),
+PopupMenuItem(child: Text('离开群聊'))
+
+
+];
+        })],
+        title: ListTile(
+          contentPadding: EdgeInsets.zero,
+          textColor: Colors.white,
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(
+                'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+          ),
+          title: Text('前端技术'),
+          subtitle: Row(
+            children: [
+              Text.rich(
+                TextSpan(children: [
+                  TextSpan(text: '111'),
+                  TextSpan(text: '个成员，'),
+                  TextSpan(text: '100'),
+                  TextSpan(text: '人在线'),
+                ]),
+                style: TextStyle(fontSize: 11, color: Colors.white70),
+              )
+            ],
+          ),
+        ),
       ),
       body: _ChatBody(),
     );
@@ -96,17 +134,37 @@ class Message extends StatelessWidget {
                           child: Text(
                             '8848',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w500),
+                                fontSize: 16, fontWeight: FontWeight.w500),
                           )),
                       Text('2022年12月17日')
                     ],
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 5),
-                  child: SelectableText.rich(TextSpan(children: [
-                    TextSpan(text: 'mscdfcmsc mscdfcmscmscdfcmscmscdfcmsc'),
-                  ], style: TextStyle(color: Colors.black))),
+                  constraints: BoxConstraints(maxWidth: 280, minWidth: 70),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Color.fromARGB(179, 201, 193, 193),
+                          width: 0.5,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 1,
+                            offset: Offset(2, 2))
+                      ]),
+                  padding: EdgeInsets.all(10),
+                  child: Stack(children: [
+                    SelectableText.rich(TextSpan(
+                        children: [
+                          TextSpan(text: 'qqqq凄凄切切群群群群群群群群群群群群群群群群群群群群群群群群群群群'),
+                        ],
+                        style: TextStyle(
+                          color: Colors.black,
+                        ))),
+                  ]),
                 )
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
