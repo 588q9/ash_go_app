@@ -3,7 +3,7 @@ import 'package:ash_go/pages/group_info_page.dart';
 import 'package:ash_go/pages/index_page.dart';
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/pages/overview_page.dart';
-import 'package:ash_go/pages/user_page.dart';
+import 'package:ash_go/pages/user_info_page.dart';
 import 'package:flutter/material.dart';
 
 
@@ -39,7 +39,7 @@ class ChatPageRoute extends MaterialPageRoute {
 class UserPageRoute extends MaterialPageRoute {
   UserPageRoute()
       : super(builder: (context) {
-          return UserPage();
+          return UserInfoPage();
         });
 }
 class GroupInfoPageRoute extends MaterialPageRoute{

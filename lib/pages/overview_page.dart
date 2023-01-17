@@ -95,7 +95,7 @@ class ChatItem extends StatelessWidget {
                   margin: EdgeInsets.only(bottom: 5),
                   child: Text(
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                       'C++中文交流'),
                 ),
                 Text.rich(TextSpan(

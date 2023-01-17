@@ -17,9 +17,9 @@ class IsolateClient {
  
   final seriesIds = SeriesIdInteger(0);
 
-  //TODO 超时丢弃，并且报超时错误给future
+  //TODO 超时丢弃，并且报超时错误给future,或者进行重传，多次失败后报错
   final _serverFrameMap = <int, Completer<dynamic>>{};
-  //TODO 需要寻找正确的服务端推送消息处理器
+  //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
   final serverPush = <ServerFrame>[];
   late Timer _sendPingtimer;
   IsolateClient() {

@@ -1,20 +1,43 @@
+import 'package:ash_go/pages/info_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+class GroupInfoPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+  return InfoPage(
+      headerBar: HeaderBar(
+        'toto',
+        NetworkImage(
+            'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+        'toto',
+      ),
+      info: Info('1919810', '群号', '1919810', '创建日期'),
+      tabBarAndViews: [
+        TabBarAndView('群成员', GroupMemeberListView().buildView(context)),
+        
+      ],
+    );
+  }
 
-class GroupInfoPage extends StatelessWidget {
+}
+
+
+
+class GroupMemeberListView  {
   var groupMemebers = [
     GroupMemeber(),
     GroupMemeber(),
     GroupMemeber(),
     GroupMemeber(),
   ];
+GroupMemeberListView();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: ListView.separated(
+
+
+
+
+  ListView buildView(BuildContext context) {
+    return   ListView.separated(
         itemBuilder: (context, index) {
           return groupMemebers[index];
         },
@@ -24,8 +47,7 @@ class GroupInfoPage extends StatelessWidget {
           );
         },
         itemCount: groupMemebers.length,
-      ),
-    ));
+      );
   }
 }
 
@@ -35,7 +57,7 @@ class GroupMemeber extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(
@@ -43,7 +65,7 @@ class GroupMemeber extends StatelessWidget {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.only(left: 14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -56,7 +78,7 @@ class GroupMemeber extends StatelessWidget {
                       ),
                       Text(
                         '在线',
-                        style: TextStyle(color: Colors.black54, fontSize: 10),
+                        style: TextStyle(color: Colors.black54, fontSize: 12),
                       )
                     ],
                   ),

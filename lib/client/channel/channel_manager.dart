@@ -20,7 +20,7 @@ typedef Connected = void Function(ChannelManager channelManager);
 
 class ChannelManager {
   Socket? _channel;
-
+//TODO 放到配置文件中，并且注意安全问题
   String host = "192.168.1.104";
   int port = 8896;
 

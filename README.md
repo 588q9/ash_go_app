@@ -1,7 +1,15 @@
 # ash_go
 通信客户端
+基本功能
+设计与实现了一个基于dart事件循环的异步多线程(isolate)socket客户端，实现了对TCP流的TLV解码与控制字节读写的工具类
 
-设计与实现了一个基于dart事件循环的异步多线程(isolate)socket客户端，实现了对tcp流的tlv解码与控制一组字节的读取与写入
+保障功能
+超时重传
+断线重连
+定时发送Ping保活
+
+高级功能
+考虑异步多isolate多socket轮调，防止阻塞单个TCP流或isolate事件循环
 
 
 
