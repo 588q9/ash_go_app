@@ -6,8 +6,6 @@ import 'package:ash_go/pages/overview_page.dart';
 import 'package:ash_go/pages/user_info_page.dart';
 import 'package:flutter/material.dart';
 
-
-
 class LoginRoute extends MaterialPageRoute {
   LoginRoute()
       : super(builder: (context) {
@@ -42,10 +40,10 @@ class UserPageRoute extends MaterialPageRoute {
           return UserInfoPage();
         });
 }
-class GroupInfoPageRoute extends MaterialPageRoute{
-GroupInfoPageRoute()
+
+class GroupInfoPageRoute extends MaterialPageRoute {
+  GroupInfoPageRoute()
       : super(builder: (context) {
           return GroupInfoPage();
         });
-  
 }

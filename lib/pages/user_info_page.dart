@@ -7,6 +7,16 @@ class UserInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoPage(
+itemButtons: [
+ItemButton('加为好友', null, (){
+
+} ),
+ItemButton('视频通话', null, (){
+
+} )
+
+],
+
       headerBar: HeaderBar(
         'toto',
         NetworkImage(

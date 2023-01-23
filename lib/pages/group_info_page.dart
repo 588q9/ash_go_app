@@ -1,10 +1,13 @@
 import 'package:ash_go/pages/info_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-class GroupInfoPage extends StatelessWidget{
+
+class GroupInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  return InfoPage(
+    return InfoPage(
+      itemButtons: [
+        ItemButton('删除群聊', null, () {}),
+      ],
       headerBar: HeaderBar(
         'toto',
         NetworkImage(
@@ -14,40 +17,32 @@ class GroupInfoPage extends StatelessWidget{
       info: Info('1919810', '群号', '1919810', '创建日期'),
       tabBarAndViews: [
         TabBarAndView('群成员', GroupMemeberListView().buildView(context)),
-        
       ],
     );
   }
-
 }
 
-
-
-class GroupMemeberListView  {
+class GroupMemeberListView {
   var groupMemebers = [
     GroupMemeber(),
     GroupMemeber(),
     GroupMemeber(),
     GroupMemeber(),
   ];
-GroupMemeberListView();
-
-
-
-
+  GroupMemeberListView();
 
   ListView buildView(BuildContext context) {
-    return   ListView.separated(
-        itemBuilder: (context, index) {
-          return groupMemebers[index];
-        },
-        separatorBuilder: (context, index) {
-          return Divider(
-            indent: 60,
-          );
-        },
-        itemCount: groupMemebers.length,
-      );
+    return ListView.separated(
+      itemBuilder: (context, index) {
+        return groupMemebers[index];
+      },
+      separatorBuilder: (context, index) {
+        return Divider(
+          indent: 60,
+        );
+      },
+      itemCount: groupMemebers.length,
+    );
   }
 }
 
@@ -92,26 +87,6 @@ class GroupMemeber extends StatelessWidget {
           )
         ],
       ),
-    )
-
-        // ListTile(
-
-        //   leading: CircleAvatar(
-        //     backgroundImage: NetworkImage(
-        //         'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
-        //   ),
-        //   title: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Text('aksop1'),
-        //       Text(
-        //         '管理员',
-        //         style: TextStyle(color: Colors.lightBlue, fontSize: 12),
-        //       )
-        //     ],
-        //   ),
-        //   subtitle: Text('在线'),
-        // )
-        ;
+    );
   }
 }
