@@ -1,17 +1,17 @@
 class User {
+  String? id;
+  String username;
+  String? password;
 
-    String? id;
-    String? username;
-     String? password;
+  String? headUrl;
 
-     String? headUrl;
+  String? email;
 
-     String? email;
+  String? phone;
 
-     String ?phone;
+  int userNumber;
 
-     int? userNumber;
 
- String? deviceId;
-
+  User(this.username, this.headUrl, this.userNumber,
+      [this.id, this.email, this.phone]);
 }
