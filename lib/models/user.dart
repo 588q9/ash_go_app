@@ -1,9 +1,9 @@
 class User {
-  String? id;
+  String id;
   String username;
-  String? password;
+  String password;
 
-  String? headUrl;
+  String headUrl;
 
   String? email;
 
@@ -12,6 +12,6 @@ class User {
   int userNumber;
 
 
-  User(this.username, this.headUrl, this.userNumber,
-      [this.id, this.email, this.phone]);
+  User(this.username, this.headUrl, this.userNumber,this.id,this.password,
+      [ this.email, this.phone]);
 }

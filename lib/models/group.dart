@@ -2,10 +2,10 @@ class Group {
   int id;
   String groupName;
   int groupNumber;
-  DateTime? createTime;
+  int createTime;
   String? descriptions;
 String? notice;
-  String? headUrl;
-  Group(this.id, this.groupName, this.groupNumber,
-      [this.createTime, this.descriptions, this.headUrl,this.notice]);
+  String headUrl;
+  Group(this.id, this.groupName, this.groupNumber,this.headUrl,this.createTime,
+      [ this.descriptions, this.notice]);
 }

@@ -4,8 +4,8 @@ int id;
 
 
 String roleName;
-
-GroupRole(this.id,this.roleName);
+String descriptions;
+GroupRole(this.id,this.roleName,this.descriptions);
 
 
 }

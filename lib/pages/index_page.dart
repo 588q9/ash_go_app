@@ -1,3 +1,4 @@
+import 'package:ash_go/common/persistence/sqlite_test.dart';
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,7 +53,11 @@ class IndexPage extends StatelessWidget {
                         children: [
                           Expanded(
                               child: ElevatedButton(
-                                  onPressed: () {}, child: Text('注册'))),
+                                  onPressed: () {
+                                    //TODO
+first_sqlite();
+
+                                  }, child: Text('注册'))),
                         ],
                       ),
                       Row(
@@ -71,8 +76,7 @@ class IndexPage extends StatelessWidget {
                                         MaterialStateColor.resolveWith(
                                             (states) => Colors.grey)),
                                 onPressed: () {
-                                  Navigator.push(context,
-                                    LoginRoute());
+                                  Navigator.push(context, LoginRoute());
                                 },
                                 child: Text('登录')),
                           ),

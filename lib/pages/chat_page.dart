@@ -8,23 +8,21 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        actions: [PopupMenuButton(
-          onSelected: (value) {
-            if(value==1){
-            Navigator.push(context, GroupInfoPageRoute());
-
+        actions: [
+          PopupMenuButton(onSelected: (value) {
+            if (value == 1) {
+              Navigator.push(context, GroupInfoPageRoute());
             }
-
-          },
-          itemBuilder: (context){
-return [
-PopupMenuItem(child: Text('群聊信息'),value: 1,),
-PopupMenuItem(child: Text('离开群聊'))
-
-
-];
-        })],
+          }, itemBuilder: (context) {
+            return [
+              PopupMenuItem(
+                child: Text('群聊信息'),
+                value: 1,
+              ),
+              PopupMenuItem(child: Text('离开群聊'))
+            ];
+          })
+        ],
         title: ListTile(
           contentPadding: EdgeInsets.zero,
           textColor: Colors.white,
