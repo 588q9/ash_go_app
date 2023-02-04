@@ -14,7 +14,7 @@ class IsolateClient {
   late SendPort _sendMain;
 
   final Completer<SendPort> _sendRunningFuture = Completer();
- 
+
   final seriesIds = SeriesIdInteger(0);
 
   //TODO 超时丢弃，并且报超时错误给future,或者进行重传，多次失败后报错

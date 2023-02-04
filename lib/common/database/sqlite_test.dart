@@ -1,4 +1,8 @@
 
+import 'dart:io';
+
+import 'package:ash_go/models/po/group_role.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -32,21 +36,20 @@ class Dog {
 }
 
 first_sqlite()async{
-// Open the database and store the reference.
-final database =await openDatabase(
-  // Set the path to the database. Note: Using the `join` function from the
-  // `path` package is best practice to ensure the path is correctly
-  // constructed for each platform.
-  join(await getDatabasesPath(), 'doggie_database.db'),
-onCreate: (db, version) async{
-  db.execute("CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
-},
-version: 1
 
+var dbAssets=await rootBundle.load("assets/database/ash_go_app.db");
+String databasePath=join(await getDatabasesPath(),"inner_database.db");
+List<int> bytes = dbAssets.buffer.asUint8List(dbAssets.offsetInBytes, dbAssets.lengthInBytes);
+(await  File(databasePath).writeAsBytes(bytes, flush: true));
+
+final database =await openDatabase(
+databasePath
 );
 
-var dog=Dog(id: 3, name: 'toto', age: 11);
-// database.insert('dogs', dog.toMap());
-var res=await database.query('dogs',where: 'id=1');
-print(res);
+ 
+var groupRole=GroupRole('111', 'admin', '管理');
+await database.insert('group_role', groupRole.toJson());
+var list=await database.query('group_role',where: 'id=111');
+print(list);
+
 }

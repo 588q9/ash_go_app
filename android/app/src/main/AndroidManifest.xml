@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ash_go">
+    package="top.ashonecoder.ash_go">
    <application
         android:label="AshGO"
         android:name="${applicationName}"

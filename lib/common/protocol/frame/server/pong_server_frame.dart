@@ -6,7 +6,7 @@ part 'pong_server_frame.g.dart';
 @JsonSerializable(explicitToJson: true)
 class PongServerFrame extends ServerFrame {
   String message;
-  static const PACKET_TYPE = PacketType.PING;
+  static const PACKET_TYPE = PacketType.PONG;
 
   PongServerFrame({this.message = 'pong'});
 

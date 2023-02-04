@@ -1,22 +1,19 @@
 import 'package:ash_go/pages/info_page.dart';
 import 'package:flutter/material.dart';
 
+
 class UserInfoPage extends StatelessWidget {
   const UserInfoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+
     return InfoPage(
-itemButtons: [
-ItemButton('加为好友', null, (){
-
-} ),
-ItemButton('视频通话', null, (){
-
-} )
-
-],
-
+      itemButtons: [
+        ItemButton('加为好友', null, () {}),
+        ItemButton('视频通话', null, () {})
+      ],
       headerBar: HeaderBar(
         'toto',
         NetworkImage(

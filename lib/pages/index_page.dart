@@ -1,7 +1,6 @@
-import 'package:ash_go/common/persistence/sqlite_test.dart';
+import 'package:ash_go/common/database/sqlite_test.dart';
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/routes/routes_container.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class IndexPage extends StatelessWidget {
@@ -55,9 +54,9 @@ class IndexPage extends StatelessWidget {
                               child: ElevatedButton(
                                   onPressed: () {
                                     //TODO
-first_sqlite();
-
-                                  }, child: Text('注册'))),
+                                    first_sqlite();
+                                  },
+                                  child: Text('注册'))),
                         ],
                       ),
                       Row(
