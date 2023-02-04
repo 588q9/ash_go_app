@@ -6,6 +6,9 @@ part 'user.g.dart';
 @JsonSerializable(explicitToJson: true)
 
 class User {
+
+  static final USER_TABLE="user";
+
   String id;
   String username;
 

@@ -14,6 +14,7 @@ TextMessage _$TextMessageFromJson(Map<String, dynamic> json) => TextMessage(
       json['content'] as String,
       json['messageId'] as String?,
       json['clientId'] as int?,
+      json['messageClientId'] as int?,
     )..isSend = json['isSend'] as int?;
 
 Map<String, dynamic> _$TextMessageToJson(TextMessage instance) =>
@@ -26,4 +27,5 @@ Map<String, dynamic> _$TextMessageToJson(TextMessage instance) =>
       'userId': instance.userId,
       'messageId': instance.messageId,
       'content': instance.content,
+      'messageClientId': instance.messageClientId,
     };

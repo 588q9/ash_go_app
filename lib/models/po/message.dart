@@ -1,6 +1,7 @@
 
 
 abstract class Message{
+  static final MESSAGE_TABLE="message";
 String? id;
 int messageType;
 int createTime;

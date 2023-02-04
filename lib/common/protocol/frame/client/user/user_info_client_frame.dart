@@ -11,6 +11,8 @@ class UserInfoClientFrame extends  UserClientFrame{
 
   static const PACKET_TYPE = PacketType.USER_INFO;
 
+UserInfoClientFrame();
+
   @override
   PacketType getPacketType() {
   return PACKET_TYPE;

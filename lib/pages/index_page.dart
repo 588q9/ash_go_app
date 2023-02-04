@@ -1,4 +1,6 @@
+import 'package:ash_go/common/database/mapper.dart';
 import 'package:ash_go/common/database/sqlite_test.dart';
+import 'package:ash_go/models/po/user.dart';
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +55,18 @@ class IndexPage extends StatelessWidget {
                           Expanded(
                               child: ElevatedButton(
                                   onPressed: () {
-                                    //TODO
-                                    first_sqlite();
+                                 Mapper().mapper.then((db) {
+var user=User('111','111',123,'11',1);
+
+db.insert(User.USER_TABLE,user.toJson() );
+
+db.query(User.USER_TABLE,where: 'id=11').then((value) {
+print(value);
+
+});
+
+
+                                 });
                                   },
                                   child: Text('注册'))),
                         ],

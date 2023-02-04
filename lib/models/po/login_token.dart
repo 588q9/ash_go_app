@@ -5,6 +5,7 @@ part 'login_token.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class LoginToken{
+  static final LOGIN_TOKEN_TABLE="login_token";
 
 String ?id;
 
