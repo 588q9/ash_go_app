@@ -4,8 +4,10 @@ import 'dart:typed_data';
 import 'package:ash_go/common/protocol/enums/packet_type.dart';
 import 'package:ash_go/common/protocol/enums/serialize_type.dart';
 import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/exception_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/pong_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/user/user_login_server_frame.dart';
 import 'package:ash_go/common/util/serializer_util.dart';
 
 typedef DeserializerHandler = Function(Map<String, dynamic> data);
@@ -13,7 +15,9 @@ typedef DeserializerHandler = Function(Map<String, dynamic> data);
 class JsonSerializerUtil extends SerializerUtil<JsonSerializer> {
   static  const Map<PacketType, DeserializerHandler>
       _packetTypeDeserializerMapping ={
-    PongServerFrame.PACKET_TYPE: PongServerFrame.fromJson
+    PongServerFrame.PACKET_TYPE: PongServerFrame.fromJson,
+    ExceptionServerFrame.PACKET_TYPE:ExceptionServerFrame.fromJson,
+    UserLoginServerFrame.PACKET_TYPE:UserLoginServerFrame.fromJson
   };
 
 const JsonSerializerUtil();

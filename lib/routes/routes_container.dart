@@ -3,6 +3,7 @@ import 'package:ash_go/pages/group_info_page.dart';
 import 'package:ash_go/pages/index_page.dart';
 import 'package:ash_go/pages/login_page.dart';
 import 'package:ash_go/pages/overview_page.dart';
+import 'package:ash_go/pages/register_page.dart';
 import 'package:ash_go/pages/user_info_page.dart';
 import 'package:flutter/material.dart';
 
@@ -45,5 +46,11 @@ class GroupInfoPageRoute extends MaterialPageRoute {
   GroupInfoPageRoute()
       : super(builder: (context) {
           return GroupInfoPage();
+        });
+}
+class RegisterPageRoute extends MaterialPageRoute {
+  RegisterPageRoute()
+      : super(builder: (context) {
+          return RegisterPage();
         });
 }
