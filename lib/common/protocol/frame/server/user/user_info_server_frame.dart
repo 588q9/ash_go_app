@@ -9,7 +9,7 @@ part 'user_info_server_frame.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class UserInfoServerFrame extends UserServerFrame{
-  static const PACKET_TYPE = PacketType.USER_LOGIN;
+  static const PACKET_TYPE = PacketType.USER_INFO;
 UserInfoServerFrame(this.user);
 UserVO user;
 

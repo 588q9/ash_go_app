@@ -10,7 +10,8 @@ part 'user_login_server_frame.g.dart';
 class UserLoginServerFrame extends UserServerFrame {
 
  String token;
-UserLoginServerFrame(this.token);
+ String userId;
+UserLoginServerFrame(this.token,this.userId);
 
   static const PACKET_TYPE = PacketType.USER_LOGIN;
 

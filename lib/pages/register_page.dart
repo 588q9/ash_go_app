@@ -47,32 +47,11 @@ var utilContainer=UtilContainer.of(context);
 utilContainer!.client.send(frame).then((value) async{
 
 if(value is UserLoginServerFrame){
-var userInfoServerFrame=await  utilContainer.client.send(UserInfoClientFrame()) as UserInfoServerFrame;
-print(userInfoServerFrame.toJson());
   var mapper=await utilContainer.mapper;
 
-await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE,where: 'userId=?',whereArgs: [userInfoServerFrame.user.id]);
-
-
-
+await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE,where: 'userId=?',whereArgs: [value.userId]);
 await mapper.insert(LoginToken.LOGIN_TOKEN_TABLE, value.toJson());
-await mapper.delete(User.USER_TABLE,where: 'id=?',whereArgs: [userInfoServerFrame.user.id]);
-await mapper.insert(User.USER_TABLE, {
-  'id':userInfoServerFrame.user.id,
-  'username':userInfoServerFrame.user.username,
-  'headUrl':userInfoServerFrame.user.headUrl
-  ,'userNumber':userInfoServerFrame.user.userNumber,
 
-});
-await mapper.delete('users_contacts',where: 'sentUserId=?',whereArgs: [userInfoServerFrame.user.id]);
-userInfoServerFrame.user.contacts.forEach((element) {
- mapper.insert('users_contacts', {
-  'sentUserId':userInfoServerFrame.user.id,
-  'receiveUserId':element.id,
-  'createTime':null
-});
-
- });
 Navigator.pushReplacement(context, OverviewRoute());
 
 

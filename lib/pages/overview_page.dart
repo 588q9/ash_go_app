@@ -1,3 +1,6 @@
+import 'package:ash_go/common/protocol/frame/client/user/user_info_client_frame.dart';
+import 'package:ash_go/common/widgets/util_container.dart';
+import 'package:ash_go/models/vo/user_vo.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
@@ -15,15 +18,43 @@ class DrawerButton extends StatelessWidget {
   }
 }
 
-class OverviewPage extends StatelessWidget {
+class OverviewPage extends StatefulWidget{
   const OverviewPage({super.key});
 
   @override
+  State<StatefulWidget> createState() {
+    return OverviewPageState();
+  }
+
+
+}
+
+
+class OverviewPageState extends State<OverviewPage> {
+ UserVO? userInfo;
+var groups;
+@override
+  void didChangeDependencies() {
+        UtilContainer.of(context)!.client.send(UserInfoClientFrame()).then((value) {
+this.setState(() {
+userInfo=value.user;
+  
+});
+
+
+});
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+
+
+
     return Scaffold(
       drawer: Drawer(
-// backgroundColor: Theme.of(context).primaryColor
-//         ,
+
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -37,13 +68,15 @@ class OverviewPage extends StatelessWidget {
                     height: 60,
                     child: CircleAvatar(
                       backgroundImage: NetworkImage(
-                          'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+userInfo?.headUrl??'https://gitee.com/assets/no_portrait.png'
+
+                 ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Text(
-                      'type1',
+                      userInfo?.username??'' ,
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   )

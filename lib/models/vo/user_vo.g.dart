@@ -11,9 +11,6 @@ UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
       json['id'] as String?,
       json['username'] as String?,
       json['userNumber'] as int?,
-      (json['contacts'] as List<dynamic>)
-          .map((e) => SimpleUserInfoVO.fromJson(e as Map<String, dynamic>))
-          .toList(),
       json['headUrl'] as String?,
     )..phone = json['phone'] as String?;
 
@@ -24,5 +21,4 @@ Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
       'username': instance.username,
       'userNumber': instance.userNumber,
       'headUrl': instance.headUrl,
-      'contacts': instance.contacts.map((e) => e.toJson()).toList(),
     };
