@@ -1,11 +1,25 @@
+import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
+import 'package:ash_go/common/protocol/frame/client/user/user_login_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/user/user_login_server_frame.dart';
+import 'package:ash_go/common/widgets/util_container.dart';
+import 'package:ash_go/models/po/login_token.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
 import 'overview_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  State<StatefulWidget> createState() {
+    return LoginPageState();
+  }
+}
+
+class LoginPageState extends State<LoginPage> {
+  final _idController = TextEditingController();
+  final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,6 +56,7 @@ class LoginPage extends StatelessWidget {
                 Column(
                   children: [
                     TextFormField(
+                      controller: _idController,
                       decoration: const InputDecoration(
                         hintText: '电子邮箱地址或账号或电话号码',
                       ),
@@ -49,9 +64,10 @@ class LoginPage extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(top: 10, bottom: 20),
                       child: TextFormField(
+                          controller: _passwordController,
                           decoration: const InputDecoration(
-                        hintText: '密码',
-                      )),
+                            hintText: '密码',
+                          )),
                     ),
                   ],
                 ),
@@ -76,9 +92,11 @@ class LoginPage extends StatelessWidget {
                       Expanded(
                           child: ElevatedButton(
                         onPressed: () {
-                       Navigator.pushAndRemoveUntil(context, OverviewRoute(), (route) => false);
-                        
+                          var frame = UserLoginClientFrame(
+                              userIdenity: _idController.text,
+                              password: _passwordController.text);
 
+                          loginLogic(frame, context);
                         },
                         child: Text('登录'),
                       ))
@@ -92,4 +110,26 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void loginLogic(ClientFrame frame, BuildContext context) {
+  var utilContainer = UtilContainer.of(context);
+  utilContainer!.connect();
+  utilContainer.client.send(frame).then((value) async {
+    if (value is UserLoginServerFrame) {
+      utilContainer.successAuthentication(value.userId);
+
+      var mapper = await utilContainer.mapper;
+
+      await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE,
+          where: 'userId=?', whereArgs: [value.userId]);
+      await mapper.insert(LoginToken.LOGIN_TOKEN_TABLE, value.toJson());
+      return true;
+    }
+    return false;
+  }).then((value) {
+    if (value) {
+      Navigator.pushAndRemoveUntil(context, OverviewRoute(), (route) => false);
+    }
+  });
 }

@@ -14,7 +14,7 @@ void main() {
 }
 
 client_test() {
-  IsolateClient connectClient = IsolateClient();
+  IsolateClient connectClient = IsolateClient('192.168.1.104',8896);
   connectClient
       .send(PingClientFrame(message: 'isolate wait ping'))
       .then((value) {
@@ -38,7 +38,7 @@ isolate_test() {
   Isolate.spawn((message) {
     print('${Isolate.current.debugName}');
 
-    ChannelManager channelManager = ChannelManager();
+    ChannelManager channelManager = ChannelManager('192.168.1.104',8896);
     manager = channelManager;
   }, r1.sendPort, debugName: 'connect');
 }

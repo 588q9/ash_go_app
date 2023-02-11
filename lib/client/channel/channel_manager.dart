@@ -21,8 +21,8 @@ typedef Connected = void Function(ChannelManager channelManager);
 class ChannelManager {
   Socket? _channel;
 //TODO 放到配置文件中，并且注意安全问题
-  String host = "192.168.1.104";
-  int port = 8896;
+  late String host ;
+ late int port ;
 
   final _serializerUtil = const JsonSerializerUtil();
 
@@ -59,7 +59,7 @@ class ChannelManager {
     return serverFrame;
   }
 
-  ChannelManager([Connected? connected]) {
+  ChannelManager(this.host,this.port,[Connected? connected]) {
     serverFrameQueue = StreamQueue<ServerFrame>(serverFrameController.stream);
 
     _lengthFieldDecoder.packetProcess = (ByteBuf buf) {

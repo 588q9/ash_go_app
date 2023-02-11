@@ -59,7 +59,7 @@ void bytebuf_test1() {
 }
 
 void channel_test1(){
-  ChannelManager channelManager = ChannelManager();
+  ChannelManager channelManager = ChannelManager('192.168.1.104',8896);
 // channelManager.send(PingClientFrame())
 //         .then((value) {
 //           print('koapkxa');

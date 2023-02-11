@@ -9,6 +9,8 @@ import 'package:async/async.dart';
 
 //TODO 对服务端主动推送的frame处理
 class IsolateClient {
+    late String host;
+late int port;
   late Isolate _running;
   final _receiveMain = ReceivePort();
   late SendPort _sendMain;
@@ -22,7 +24,8 @@ class IsolateClient {
   //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
   final serverPush = <ServerFrame>[];
   late Timer _sendPingtimer;
-  IsolateClient() {
+
+  IsolateClient(this.host,this.port) {
     _sendMain = _receiveMain.sendPort;
     // _events = StreamQueue(_receiveMain);
 
@@ -44,6 +47,7 @@ class IsolateClient {
     // var sendRunning = await _events.next;
     SendPort sendRunning = await receivePort.first;
     receivePort.close();
+    sendRunning.send([host,port]);
     _sendRunningFuture.complete(sendRunning);
 
     _receiveMain.listen((serverFrame) {
@@ -60,7 +64,7 @@ class IsolateClient {
       _serverFrameMap.remove(serverFrame.seriesId);
     });
   }
-
+@Deprecated("客户端推送的消息也应该有确认响应")
   void sendSingleSide(ClientFrame frame) async {
     var sendRunning = await _sendRunningFuture.future;
 
@@ -78,20 +82,37 @@ class IsolateClient {
 
     return completer.future;
   }
+static String CLOSE='close';
+
+void close()async{
+  
+    var sendRunning = await _sendRunningFuture.future;
+sendRunning.send(CLOSE);
+
+
+}
+
+
 }
 //TODO 考虑将_run方法做成多isolate多channelmanager轮流使用或者的模型，切换isolate轮流对channelmanager进行发送
 
 void _run(List<SendPort> sendMain) async {
-  ChannelManager manager = ChannelManager();
   ReceivePort receiveRunning = ReceivePort();
   sendMain[0].send(receiveRunning.sendPort);
 
   var runningEvents = StreamQueue(receiveRunning);
+  List socketInfo =await runningEvents.next;
+
+  ChannelManager manager = ChannelManager(socketInfo[0],socketInfo[1]);
+
   sendMain.removeAt(0);
   while (true) {
     //TODO 处理异常情况
     var clientFrame = await runningEvents.next;
-
+if(clientFrame==IsolateClient.CLOSE){
+  manager.shutdown();
+break;
+}
     manager.send(clientFrame);
     var serverFrameFuture = manager.serverFrameQueue.next;
 
@@ -100,7 +121,6 @@ void _run(List<SendPort> sendMain) async {
     });
   }
 }
-
 //每个channelManager对象应当只有一个seriesid生成器
 class SeriesIdInteger {
   int _value;

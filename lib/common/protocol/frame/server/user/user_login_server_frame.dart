@@ -28,6 +28,8 @@ return PACKET_TYPE;
 
 
 
+
+
   @override
-  String toString() => 'UserLoginServerFrame(token: $token)';
+  String toString() => 'UserLoginServerFrame(token: $token, userId: $userId)';
 }
