@@ -121,8 +121,8 @@ void loginLogic(ClientFrame frame, BuildContext context) {
 
       var mapper = await utilContainer.mapper;
 
-      await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE,
-          where: 'userId=?', whereArgs: [value.userId]);
+      await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE
+          );
       await mapper.insert(LoginToken.LOGIN_TOKEN_TABLE, value.toJson());
       return true;
     }

@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'group.g.dart';
+part 'user_group.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 
