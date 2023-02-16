@@ -8,8 +8,12 @@ part of 'user_pull_session_server_frame.dart';
 
 UserPullSessionServerFrame _$UserPullSessionServerFrameFromJson(
         Map<String, dynamic> json) =>
-    UserPullSessionServerFrame();
+    UserPullSessionServerFrame(
+      SessionVO.fromJson(json['session'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$UserPullSessionServerFrameToJson(
         UserPullSessionServerFrame instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'session': instance.session.toJson(),
+    };
