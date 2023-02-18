@@ -1,31 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'text_message.dart';
+part of 'message.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TextMessage _$TextMessageFromJson(Map<String, dynamic> json) => TextMessage(
+Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       json['userId'] as int,
-      json['id'] as String?,
       json['messageType'] as int,
       json['createTime'] as int,
-      json['content'] as String,
-      json['messageId'] as String?,
+      json['id'] as String?,
+      json['isSend'] as int?,
       json['clientId'] as int?,
-      json['messageClientId'] as int?,
-    )..isSend = json['isSend'] as int?;
+      json['textContent'] as String?,
+      json['extensionContent'] as String?,
+    );
 
-Map<String, dynamic> _$TextMessageToJson(TextMessage instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'id': instance.id,
       'messageType': instance.messageType,
       'createTime': instance.createTime,
       'clientId': instance.clientId,
       'isSend': instance.isSend,
       'userId': instance.userId,
-      'messageId': instance.messageId,
-      'content': instance.content,
-      'messageClientId': instance.messageClientId,
+      'textContent': instance.textContent,
+      'extensionContent': instance.extensionContent,
     };

@@ -7,12 +7,13 @@ part of 'user_vo.dart';
 // **************************************************************************
 
 UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
+      json['phone'] as String?,
       json['email'] as String?,
       json['id'] as String?,
       json['username'] as String?,
       json['userNumber'] as int?,
       json['headUrl'] as String?,
-    )..phone = json['phone'] as String?;
+    );
 
 Map<String, dynamic> _$UserVOToJson(UserVO instance) => <String, dynamic>{
       'email': instance.email,

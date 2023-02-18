@@ -18,43 +18,32 @@ class DrawerButton extends StatelessWidget {
   }
 }
 
-class OverviewPage extends StatefulWidget{
+class OverviewPage extends StatefulWidget {
   const OverviewPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
     return OverviewPageState();
   }
-
-
 }
 
-
 class OverviewPageState extends State<OverviewPage> {
- UserVO? userInfo;
-var groups;
-@override
+  UserVO? userInfo;
+  var groups;
+  @override
   void didChangeDependencies() {
-        UtilContainer.of(context)!.client.send(UserInfoClientFrame()).then((value) {
-this.setState(() {
-userInfo=value.user;
-  
-});
-
-
-});
+    UtilContainer.of(context)!.client.send(UserInfoClientFrame()).then((value) {
+      this.setState(() {
+        userInfo = value.user;
+      });
+    });
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
     return Scaffold(
       drawer: Drawer(
-
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -67,16 +56,14 @@ userInfo=value.user;
                     width: 60,
                     height: 60,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-userInfo?.headUrl??'https://gitee.com/assets/no_portrait.png'
-
-                 ),
+                      backgroundImage: NetworkImage(userInfo?.headUrl ??
+                          'https://gitee.com/assets/no_portrait.png'),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Text(
-                      userInfo?.username??'' ,
+                      userInfo?.username ?? '',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   )

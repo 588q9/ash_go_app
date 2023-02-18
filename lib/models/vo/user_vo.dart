@@ -17,7 +17,7 @@ class UserVO {
 String ?headUrl;
 
 
-UserVO(this.email,this.id,this.username,this.userNumber,this.headUrl);
+UserVO( String? phone,this.email,this.id,this.username,this.userNumber,this.headUrl);
    factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
   Map<String, dynamic> toJson() => _$UserVOToJson(this);  
 
