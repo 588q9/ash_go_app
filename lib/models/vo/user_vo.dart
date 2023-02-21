@@ -9,15 +9,14 @@ part 'user_vo.g.dart';
 @JsonSerializable(explicitToJson: true)
 class UserVO {
 
-     String? email;
-     String? phone;
+
     String? id;
   String? username;
    int? userNumber;
 String ?headUrl;
 
 
-UserVO( String? phone,this.email,this.id,this.username,this.userNumber,this.headUrl);
+UserVO( this.id,this.username,this.userNumber,this.headUrl);
    factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
   Map<String, dynamic> toJson() => _$UserVOToJson(this);  
 

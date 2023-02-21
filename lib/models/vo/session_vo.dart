@@ -10,7 +10,12 @@ class SessionVO{
  List<UserContactVO> userContacts;
 
 
- List<ContactMessageVO> mySendContactsMessages;
+ @override
+  String toString() {
+    return 'SessionVO{userContacts: $userContacts, mySendContactsMessages: $mySendContactsMessages}';
+ }
+
+  List<ContactMessageVO> mySendContactsMessages;
 SessionVO(this.userContacts,this.mySendContactsMessages);
    factory SessionVO.fromJson(Map<String, dynamic> json) => _$SessionVOFromJson(json);
   Map<String, dynamic> toJson() => _$SessionVOToJson(this);  

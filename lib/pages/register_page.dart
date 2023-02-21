@@ -41,7 +41,7 @@ class RegisterPageState extends State<RegisterPage> {
                 var password = this._passwordController.text;
                 var frame = UserRegisterClientFrame(username, password);
 
-                loginLogic(frame, context);
+                loginOrRegisterLogic(frame, context);
               },
             )
           ],

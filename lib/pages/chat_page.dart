@@ -1,5 +1,8 @@
+import 'package:ash_go/common/widgets/util_container.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
+
+import '../models/po/message.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -11,7 +14,14 @@ class ChatPage extends StatelessWidget {
         actions: [
           PopupMenuButton(onSelected: (value) {
             if (value == 1) {
-              Navigator.push(context, GroupInfoPageRoute());
+              print(UtilContainer.of(context)!.client);
+              UtilContainer.of(context)!.mapper.then((db) async{
+                var res=await db.query(Message.MESSAGE_TABLE);
+
+                print(Message.fromJson(res[0]));
+
+              });
+              // Navigator.push(context, GroupInfoPageRoute());
             }
           }, itemBuilder: (context) {
             return [
@@ -54,7 +64,7 @@ class ChatPage extends StatelessWidget {
 Iterable<Widget> _messageList() {
   List<Widget> list = [];
   for (int i = 0; i < 100; i++) {
-    list.add(Message());
+    list.add(MessageDiagram());
   }
   return list;
 }
@@ -103,7 +113,7 @@ class ChatBottomBar extends StatelessWidget {
   }
 }
 
-class Message extends StatelessWidget {
+class MessageDiagram extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

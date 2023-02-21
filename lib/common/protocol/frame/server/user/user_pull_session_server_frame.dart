@@ -14,6 +14,11 @@ SessionVO session;
 UserPullSessionServerFrame(this.session);
 
   @override
+  String toString() {
+    return 'UserPullSessionServerFrame{session: $session}';
+  }
+
+  @override
   PacketType getPacketType() {
    return PACKET_TYPE;
   }

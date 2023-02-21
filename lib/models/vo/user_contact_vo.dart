@@ -5,11 +5,20 @@ part 'user_contact_vo.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class UserContactVO extends SimpleUserInfoVO{
-  UserContactVO(this.sendToUserMessages,super.headUrl, super.userNumber, super.username, super.id);
+  UserContactVO(this.sendToUserMessages,
+      this.contactCreateTime,
+      super.headUrl, super.userNumber, super.username, super.id
+      ,super.updateTime
+      );
 List<ContactMessageVO> sendToUserMessages;
+   int? contactCreateTime;
 
    factory UserContactVO.fromJson(Map<String, dynamic> json) => _$UserContactVOFromJson(json);
   @override
-  Map<String, dynamic> toJson() => _$UserContactVOToJson(this);  
+  Map<String, dynamic> toJson() => _$UserContactVOToJson(this);
 
+  @override
+  String toString() {
+    return 'UserContactVO{sendToUserMessages: $sendToUserMessages}';
+  }
 }

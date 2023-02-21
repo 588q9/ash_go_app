@@ -7,11 +7,11 @@ part of 'message.dart';
 // **************************************************************************
 
 Message _$MessageFromJson(Map<String, dynamic> json) => Message(
-      json['userId'] as int,
+      json['userId'] as String,
       json['messageType'] as int,
       json['createTime'] as int,
       json['id'] as String?,
-      json['isSend'] as int?,
+      json['isSend'] as bool?,
       json['clientId'] as int?,
       json['textContent'] as String?,
       json['extensionContent'] as String?,

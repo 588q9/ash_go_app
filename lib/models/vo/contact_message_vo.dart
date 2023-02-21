@@ -10,6 +10,11 @@ class ContactMessageVO extends Message {
  
 String receiveUserId;
 
+@override
+  String toString() {
+    return 'ContactMessageVO{receiveUserId: $receiveUserId}';
+  }
+
   ContactMessageVO(
     this.receiveUserId,super.userId,super.messageType,
 

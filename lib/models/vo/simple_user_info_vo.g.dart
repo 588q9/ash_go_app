@@ -12,6 +12,7 @@ SimpleUserInfoVO _$SimpleUserInfoVOFromJson(Map<String, dynamic> json) =>
       json['userNumber'] as int,
       json['username'] as String,
       json['id'] as String,
+      json['updateTime'] as int,
     );
 
 Map<String, dynamic> _$SimpleUserInfoVOToJson(SimpleUserInfoVO instance) =>
@@ -19,5 +20,6 @@ Map<String, dynamic> _$SimpleUserInfoVOToJson(SimpleUserInfoVO instance) =>
       'username': instance.username,
       'userNumber': instance.userNumber,
       'headUrl': instance.headUrl,
+      'updateTime': instance.updateTime,
       'id': instance.id,
     };

@@ -9,11 +9,11 @@ part of 'contact_message_vo.dart';
 ContactMessageVO _$ContactMessageVOFromJson(Map<String, dynamic> json) =>
     ContactMessageVO(
       json['receiveUserId'] as String,
-      json['userId'] as int,
+      json['userId'] as String,
       json['messageType'] as int,
       json['createTime'] as int,
       json['id'] as String?,
-      json['isSend'] as int?,
+      json['isSend'] as bool?,
       json['clientId'] as int?,
       json['textContent'] as String?,
       json['extensionContent'] as String?,

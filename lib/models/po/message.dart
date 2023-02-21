@@ -13,15 +13,16 @@ int messageType;
 int createTime;
 
 int? clientId;
-int? isSend;
-int userId;
+bool? isSend;
+  String userId;
  String? textContent;
  String? extensionContent;
 Message(this.userId,this.messageType,
 
 this.createTime,[this.id,this.isSend,this.clientId,this.textContent,this.extensionContent]);
 
-
+  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
 
   @override
   String toString() {

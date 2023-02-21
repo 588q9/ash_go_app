@@ -8,11 +8,15 @@ part 'user_contacts.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class UserContacts {
+  static final USER_CONTACTS_TABLE="user_contacts";
 
 String? userId;
 int? createTime;
 UserContacts([this.userId,this.createTime]);
 
+  factory UserContacts.fromJson(Map<String, dynamic> json) => _$UserContactsFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$UserContactsToJson(this);
 
   @override
   String toString() => 'UserContacts(userId: $userId, createTime: $createTime)';

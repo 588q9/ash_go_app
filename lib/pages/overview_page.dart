@@ -1,8 +1,10 @@
 import 'package:ash_go/common/protocol/frame/client/user/user_info_client_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
+import 'package:ash_go/models/po/user.dart';
 import 'package:ash_go/models/vo/user_vo.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DrawerButton extends StatelessWidget {
   const DrawerButton({super.key});
@@ -35,8 +37,14 @@ class OverviewPageState extends State<OverviewPage> {
     UtilContainer.of(context)!.client.send(UserInfoClientFrame()).then((value) {
       this.setState(() {
         userInfo = value.user;
+         UtilContainer.of(context)!.mapper.then((value) {
+           value.insert(User.USER_TABLE, userInfo!.toJson(),conflictAlgorithm: ConflictAlgorithm.replace);
+
+         });
       });
     });
+
+
     super.didChangeDependencies();
   }
 

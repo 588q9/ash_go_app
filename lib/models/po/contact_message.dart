@@ -5,7 +5,7 @@ part 'contact_message.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class ContactMessage {
-  static final MESSAGE_TABLE="contact_message";
+  static final CONTACT_MESSAGE_TABLE="contact_message";
 
 String? messageId;
 String? receiveUserId;
@@ -16,6 +16,9 @@ int? messageClientId;
     this.messageClientId,
   });
 
+  factory ContactMessage.fromJson(Map<String, dynamic> json) => _$ContactMessageFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$ContactMessageToJson(this);
 
 
   @override

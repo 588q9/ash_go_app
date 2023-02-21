@@ -9,9 +9,9 @@ class CommonClientFrame extends ClientFrame{
   
   Map<String,dynamic>? data;
   
-@JsonKey(ignore: true)
-
+@JsonKey(includeFromJson: false,includeToJson: false)
   PacketType? packetType;
+
 CommonClientFrame({ this.packetType, this.data});
 
 

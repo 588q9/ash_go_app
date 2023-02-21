@@ -1,12 +1,20 @@
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/user/user_login_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/client/user/user_pull_session_client_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/user/user_login_server_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/user/user_pull_session_server_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
+import 'package:ash_go/models/po/contact_message.dart';
 import 'package:ash_go/models/po/login_token.dart';
+import 'package:ash_go/models/po/message.dart';
+import 'package:ash_go/models/po/user.dart';
+import 'package:ash_go/models/po/user_contacts.dart';
+import 'package:ash_go/models/vo/session_vo.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
-import 'overview_page.dart';
+import '../models/vo/user_contact_vo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,6 +28,7 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   final _idController = TextEditingController();
   final _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,7 +105,7 @@ class LoginPageState extends State<LoginPage> {
                               userIdenity: _idController.text,
                               password: _passwordController.text);
 
-                          loginLogic(frame, context);
+                          loginOrRegisterLogic(frame, context);
                         },
                         child: Text('登录'),
                       ))
@@ -112,18 +121,89 @@ class LoginPageState extends State<LoginPage> {
   }
 }
 
-void loginLogic(ClientFrame frame, BuildContext context) {
+void pullSessionDataToDB(SessionVO session, Database database) {
+  database.transaction((txn) async {
+
+    for (UserContactVO userContact in session.userContacts) {
+      txn.insert(
+          User.USER_TABLE,
+          User(
+                  userContact.username,
+                  userContact.headUrl,
+                  userContact.userNumber,
+                  userContact.id,
+                  userContact.updateTime)
+              .toJson());
+      txn.insert(UserContacts.USER_CONTACTS_TABLE,
+          UserContacts(userContact.id, userContact.contactCreateTime).toJson());
+
+      for (var message in userContact.sendToUserMessages) {
+        int clientId = await txn.insert(
+            Message.MESSAGE_TABLE,
+            Message(
+                    message.userId,
+                    message.messageType,
+                    message.createTime,
+                    message.id,
+                    true,
+                    null,
+                    message.textContent,
+                    message.extensionContent)
+                .toJson());
+        txn.insert(
+            ContactMessage.CONTACT_MESSAGE_TABLE,
+            ContactMessage(
+                    messageId: message.id,
+                    messageClientId: clientId,
+                    receiveUserId: message.receiveUserId)
+                .toJson());
+      }
+    }
+    for (var myContactMessage in session.mySendContactsMessages) {
+      int clientId = await txn.insert(
+          ContactMessage.CONTACT_MESSAGE_TABLE,
+          ContactMessage(
+                  messageId: myContactMessage.id,
+                  receiveUserId: myContactMessage.receiveUserId)
+              .toJson());
+      txn.insert(
+          Message.MESSAGE_TABLE,
+          Message(
+                  myContactMessage.userId,
+                  myContactMessage.messageType,
+                  myContactMessage.createTime,
+                  myContactMessage.id,
+                  true,
+                  clientId,
+                  myContactMessage.textContent,
+                  myContactMessage.extensionContent)
+              .toJson());
+    }
+  });
+}
+
+void loginOrRegisterLogic(ClientFrame frame, BuildContext context) {
   var utilContainer = UtilContainer.of(context);
   utilContainer!.connect();
   utilContainer.client.send(frame).then((value) async {
     if (value is UserLoginServerFrame) {
       utilContainer.successAuthentication(value.userId);
-
       var mapper = await utilContainer.mapper;
 
-      await mapper.delete(LoginToken.LOGIN_TOKEN_TABLE
-          );
-      await mapper.insert(LoginToken.LOGIN_TOKEN_TABLE, value.toJson());
+ utilContainer.mapperMetaInfo!.isFirstCreateDb.future.then((value)async {
+   if(!value){
+     return;
+   }
+   var sessionFrame=await utilContainer.client.send(UserPullSessionClientFrame());
+   if(sessionFrame is UserPullSessionServerFrame){
+     pullSessionDataToDB(sessionFrame.session, mapper);
+
+   }
+ });
+
+
+      await mapper.insert(LoginToken.LOGIN_TOKEN_TABLE, value.toJson(),conflictAlgorithm: ConflictAlgorithm.replace);
+
       return true;
     }
     return false;

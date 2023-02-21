@@ -8,37 +8,49 @@ import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yaml/yaml.dart';
 
+class AppUtil{
+  ConnectClient? client;
+  Future<Database>?   mapper;
+  Mapper? mapperMetaInfo;
+  final Completer configuration=Completer();
+
+  AppUtil({this.client, this.mapper, this.mapperMetaInfo}){
+    rootBundle.loadString("assets/configuration/application.yml").then((value) {
+      var doc = loadYaml(value)['server'];
+      configuration.complete(doc);
+
+    });
+
+  }
+
+}
+
 class UtilContainer extends InheritedWidget {
   UtilContainer({
     Key? key,
     required Widget child,
-  }) : super(key: key, child: child){
- 
-         rootBundle.loadString("assets/configuration/application.yml").then((value) {
-    var doc = loadYaml(value)['server'];
-configuration.complete(doc);
+  }) : super(key: key, child: child);
+AppUtil? _util;
 
-         });
 
-  }
-
-   ConnectClient? _client;
-  Future<Database>?   _mapper;
-   final Completer configuration=Completer();
 connect(){
-  _client ??= ConnectClient(configuration.future);
+  _util??=AppUtil();
+  _util!.client ??= ConnectClient(_util!.configuration.future);
 
 }
 successAuthentication(String userId){
-   _mapper= Mapper(userId).mapper;
+  _util!.mapperMetaInfo??=Mapper(userId);
+   _util!.mapper??= _util!.mapperMetaInfo!.mapper;
 }
  Future<Database> get mapper{
-  return _mapper!;
+  return _util!.mapper!;
 }
 ConnectClient get client{
-  return _client!;
+  return _util!.client!;
 }
-
+  Mapper get mapperMetaInfo{
+  return _util!.mapperMetaInfo!;
+  }
   //定义一个便捷方法，方便子树中的widget获取共享数据
   static UtilContainer? of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<UtilContainer>();
@@ -46,7 +58,11 @@ ConnectClient get client{
 
   //该回调决定当data发生变化时，是否通知子树中依赖data的Widget重新build
   @override
-  bool updateShouldNotify(UtilContainer old) {
+  bool updateShouldNotify( UtilContainer old) {
+
+  if(old._util!=null){
+    _util=old._util;
+  }
     return false;
   }
 }
