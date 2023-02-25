@@ -1,4 +1,6 @@
+import 'package:ash_go/pages/chat/user_chat_page.dart';
 import 'package:ash_go/pages/chat_page.dart';
+import 'package:ash_go/pages/chat/group_chat_page.dart';
 import 'package:ash_go/pages/group_info_page.dart';
 import 'package:ash_go/pages/index_page.dart';
 import 'package:ash_go/pages/login_page.dart';
@@ -29,14 +31,21 @@ class OverviewRoute extends MaterialPageRoute {
 }
 
 class ChatPageRoute extends MaterialPageRoute {
-  ChatPageRoute()
+  ChatItem chatItem;
+
+  ChatPageRoute(this.chatItem)
       : super(builder: (context) {
-          return ChatPage();
+
+          return chatItem.isGroup?GroupChatPage(
+              GroupChatInfo(onlineNums: 0, memeberNums: 0, headUrl: chatItem.headUrl, name: chatItem.name, id: chatItem.id)
+              )
+          :UserChatPage(UserChatInfo(onlineTime: '', headUrl: chatItem.headUrl, name: chatItem.name, id: chatItem.id))
+          ;
         });
 }
 
-class UserPageRoute extends MaterialPageRoute {
-  UserPageRoute()
+class UserInfoPageRoute extends MaterialPageRoute {
+  UserInfoPageRoute()
       : super(builder: (context) {
           return UserInfoPage();
         });

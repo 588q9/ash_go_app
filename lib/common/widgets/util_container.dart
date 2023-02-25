@@ -13,7 +13,7 @@ class AppUtil{
   Future<Database>?   mapper;
   Mapper? mapperMetaInfo;
   final Completer configuration=Completer();
-
+final Completer<String> userIdCompleter=Completer();
   AppUtil({this.client, this.mapper, this.mapperMetaInfo}){
     rootBundle.loadString("assets/configuration/application.yml").then((value) {
       var doc = loadYaml(value)['server'];
@@ -31,7 +31,17 @@ class UtilContainer extends InheritedWidget {
     required Widget child,
   }) : super(key: key, child: child);
 AppUtil? _util;
+static ConnectClient getClient(BuildContext context){
+  return UtilContainer.of(context)!.client;
 
+}
+  static Future<Database> getMapper(BuildContext context){
+    return UtilContainer.of(context)!.mapper;
+
+  }
+  static Future<String> getLoginUserId(BuildContext context) {
+  return  UtilContainer.of(context)!.userId;
+  }
 
 connect(){
   _util??=AppUtil();
@@ -41,10 +51,16 @@ connect(){
 successAuthentication(String userId){
   _util!.mapperMetaInfo??=Mapper(userId);
    _util!.mapper??= _util!.mapperMetaInfo!.mapper;
+  _util!.userIdCompleter.complete(userId);
+
 }
  Future<Database> get mapper{
   return _util!.mapper!;
 }
+Future<String> get userId{
+  return _util!.userIdCompleter.future;
+}
+
 ConnectClient get client{
   return _util!.client!;
 }

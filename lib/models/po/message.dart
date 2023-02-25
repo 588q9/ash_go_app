@@ -2,6 +2,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import '../vo/user_vo.dart';
+
 part 'message.g.dart';
 
 @JsonSerializable(explicitToJson: true)
@@ -13,19 +15,23 @@ int messageType;
 int createTime;
 
 int? clientId;
-bool? isSend;
+int? messageStatus;
   String userId;
  String? textContent;
  String? extensionContent;
+
+  @JsonKey(includeToJson: false,includeFromJson: false)
+  UserVO? sendUserVO;
+
 Message(this.userId,this.messageType,
 
-this.createTime,[this.id,this.isSend,this.clientId,this.textContent,this.extensionContent]);
+this.createTime,[this.id,this.messageStatus,this.clientId,this.textContent,this.extensionContent]);
 
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 
   @override
   String toString() {
-    return 'Message(id: $id, messageType: $messageType, createTime: $createTime, clientId: $clientId, isSend: $isSend, userId: $userId, textContent: $textContent, extensionContent: $extensionContent)';
+    return 'Message{id: $id, messageType: $messageType, createTime: $createTime, clientId: $clientId, messageStatus: $messageStatus, userId: $userId, textContent: $textContent, extensionContent: $extensionContent}';
   }
 }

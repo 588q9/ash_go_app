@@ -1,94 +1,136 @@
+import 'package:ash_go/common/util/date_util.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
+import 'package:ash_go/pages/overview_page.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
 import '../models/po/message.dart';
+abstract class ChatTitleInfo{
+  String headUrl;
+  String name;
+String id;
+  String? status;
+
+  ChatTitleInfo({required this.headUrl,required this.name,required this.id, this.status});
+}
+
+
+
+
+class ChatTitle extends StatelessWidget{
+
+ ChatTitleInfo chatTitleInfo;
+ List<InlineSpan> bottomSpan=[];
+ChatTitle({ required this.chatTitleInfo,required  this.bottomSpan});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      textColor: Colors.white,
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(
+           chatTitleInfo.headUrl ),
+      ),
+      title: Text(chatTitleInfo.name),
+      subtitle: Row(
+        children: [
+          Text.rich(
+            TextSpan(children:
+            bottomSpan
+            ),
+            style: TextStyle(fontSize: 11, color: Colors.white70),
+          )
+        ],
+      ),
+    );
+  }
+
+
+
+
+}
+
+
+
 
 class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+  ChatTitleInfo chatTitleInfo;
+  List<InlineSpan> bottomBarSpan;
+  PopupMenuButton<int> popupMenuButton;
+List<MessageDiagram> messageDigrams;
+
+
+  ChatPage({required this.chatTitleInfo,required this.bottomBarSpan,required this.popupMenuButton
+
+  ,required this.messageDigrams
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          PopupMenuButton(onSelected: (value) {
-            if (value == 1) {
-              print(UtilContainer.of(context)!.client);
-              UtilContainer.of(context)!.mapper.then((db) async{
-                var res=await db.query(Message.MESSAGE_TABLE);
-
-                print(Message.fromJson(res[0]));
-
-              });
-              // Navigator.push(context, GroupInfoPageRoute());
-            }
-          }, itemBuilder: (context) {
-            return [
-              PopupMenuItem(
-                child: Text('群聊信息'),
-                value: 1,
-              ),
-              PopupMenuItem(child: Text('离开群聊'))
-            ];
-          })
+       popupMenuButton
         ],
-        title: ListTile(
-          contentPadding: EdgeInsets.zero,
-          textColor: Colors.white,
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
-          ),
-          title: Text('前端技术'),
-          subtitle: Row(
-            children: [
-              Text.rich(
-                TextSpan(children: [
-                  TextSpan(text: '111'),
-                  TextSpan(text: '个成员，'),
-                  TextSpan(text: '100'),
-                  TextSpan(text: '人在线'),
-                ]),
-                style: TextStyle(fontSize: 11, color: Colors.white70),
-              )
-            ],
-          ),
-        ),
+        title:ChatTitle(chatTitleInfo: chatTitleInfo,bottomSpan: bottomBarSpan,) ,
       ),
-      body: _ChatBody(),
+      body: ChatBody(list: messageDigrams,),
     );
   }
-}
 
-Iterable<Widget> _messageList() {
-  List<Widget> list = [];
-  for (int i = 0; i < 100; i++) {
-    list.add(MessageDiagram());
-  }
-  return list;
-}
 
-class _MessageView extends StatelessWidget {
+
+
+
+
+
+}
+//
+// Iterable<Widget> _messageList() {
+//   List<Widget> list = [];
+//   for (int i = 0; i < 100; i++) {
+//     list.add(MessageDiagram());
+//   }
+//   return list;
+// }
+
+class MessageView extends StatelessWidget {
+
+  List<MessageDiagram> list;
+
+  MessageView({required this.list});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       reverse: true,
-      children: [..._messageList().toList()],
+      children: list,
     );
   }
 }
 
-class _ChatBody extends StatelessWidget {
+class ChatBody extends StatelessWidget {
+  List<MessageDiagram> list;
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [Expanded(child: _MessageView()), ChatBottomBar()],
+      children: [Expanded(child: MessageView(list: list,)), ChatBottomBar()],
     );
   }
+
+  ChatBody({required this.list});
+
+
 }
 
 class ChatBottomBar extends StatelessWidget {
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
@@ -113,21 +155,27 @@ class ChatBottomBar extends StatelessWidget {
   }
 }
 
-class MessageDiagram extends StatelessWidget {
+
+abstract class MessageDiagram extends StatelessWidget {
+Message message;
+bool isMySent;
+MessageDiagram({required this.message,this.isMySent=false });
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Row(
+        textDirection: isMySent?TextDirection.rtl:TextDirection.ltr,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
               onTap: () {
-                Navigator.push(context, UserPageRoute());
+                Navigator.push(context, UserInfoPageRoute());
               },
               child: CircleAvatar(
                 backgroundImage: NetworkImage(
-                    'https://ashone-oss-picture.oss-cn-beijing.aliyuncs.com/myBlog/blog_img/1654333418497.jpg'),
+                    message.sendUserVO?.headUrl??DEFAULT_HEAD_URL),
               )),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -140,11 +188,11 @@ class MessageDiagram extends StatelessWidget {
                       Container(
                           margin: EdgeInsets.only(right: 10),
                           child: Text(
-                            '8848',
+                            message.sendUserVO?.username!=null&&!isMySent?message.sendUserVO!.username!:'',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500),
                           )),
-                      Text('2022年12月17日')
+                      Text(datestampToFormat('yyyy年MM月dd日 h:m', message.createTime) )
                     ],
                   ),
                 ),
@@ -167,7 +215,7 @@ class MessageDiagram extends StatelessWidget {
                   child: Stack(children: [
                     SelectableText.rich(TextSpan(
                         children: [
-                          TextSpan(text: 'qqqq凄凄切切群群群群群群群群群群群群群群群群群群群群群群群群群群群'),
+                          TextSpan(text: message.textContent),
                         ],
                         style: TextStyle(
                           color: Colors.black,
@@ -175,7 +223,7 @@ class MessageDiagram extends StatelessWidget {
                   ]),
                 )
               ],
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:!isMySent?CrossAxisAlignment.start:CrossAxisAlignment.end,
             ),
           )
         ],

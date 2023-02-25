@@ -34,13 +34,9 @@ class IndexPage extends StatelessWidget {
                 ),
                 const Text.rich(
                   TextSpan(children: [
+
                     TextSpan(
-                      text: 'AshGO',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
-                    ),
-                    TextSpan(
-                      text: ' 是一款在线即时聊天App',
+                      text: ' 在线即时聊天App',
                       style: TextStyle(
                         color: Color.fromARGB(255, 77, 74, 74),
                         fontSize: 20,

@@ -16,9 +16,12 @@ class UserVO {
 String ?headUrl;
 
 
-UserVO( this.id,this.username,this.userNumber,this.headUrl);
+UserVO( {this.id,this.username,this.userNumber,this.headUrl});
    factory UserVO.fromJson(Map<String, dynamic> json) => _$UserVOFromJson(json);
-  Map<String, dynamic> toJson() => _$UserVOToJson(this);  
+  Map<String, dynamic> toJson() => _$UserVOToJson(this);
 
-
+    @override
+  String toString() {
+    return 'UserVO{id: $id, username: $username, userNumber: $userNumber, headUrl: $headUrl}';
+  }
 }

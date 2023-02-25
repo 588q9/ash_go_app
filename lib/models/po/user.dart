@@ -20,6 +20,11 @@ class User {
   int userNumber;
 int updateTime;
 
+  @override
+  String toString() {
+    return 'User{id: $id, username: $username, headUrl: $headUrl, userNumber: $userNumber, updateTime: $updateTime}';
+  }
+
   User(this.username, this.headUrl, this.userNumber,this.id,this.updateTime
     );
     

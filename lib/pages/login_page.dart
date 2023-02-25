@@ -1,3 +1,4 @@
+import 'package:ash_go/common/enums/message_status.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/user/user_login_client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/user/user_pull_session_client_frame.dart';
@@ -121,8 +122,8 @@ class LoginPageState extends State<LoginPage> {
   }
 }
 
-void pullSessionDataToDB(SessionVO session, Database database) {
-  database.transaction((txn) async {
+Future<void> pullSessionDataToDB(SessionVO session, Database database) async {
+ return await database.transaction((txn) async {
 
     for (UserContactVO userContact in session.userContacts) {
       txn.insert(
@@ -145,7 +146,7 @@ void pullSessionDataToDB(SessionVO session, Database database) {
                     message.messageType,
                     message.createTime,
                     message.id,
-                    true,
+                    MessageStatus.SENT.index,
                     null,
                     message.textContent,
                     message.extensionContent)
@@ -173,12 +174,13 @@ void pullSessionDataToDB(SessionVO session, Database database) {
                   myContactMessage.messageType,
                   myContactMessage.createTime,
                   myContactMessage.id,
-                  true,
+                  MessageStatus.SENT.index,
                   clientId,
                   myContactMessage.textContent,
                   myContactMessage.extensionContent)
               .toJson());
     }
+    return;
   });
 }
 
@@ -190,13 +192,13 @@ void loginOrRegisterLogic(ClientFrame frame, BuildContext context) {
       utilContainer.successAuthentication(value.userId);
       var mapper = await utilContainer.mapper;
 
- utilContainer.mapperMetaInfo!.isFirstCreateDb.future.then((value)async {
+ await utilContainer.mapperMetaInfo.isFirstCreateDb.future.then((value)async {
    if(!value){
      return;
    }
    var sessionFrame=await utilContainer.client.send(UserPullSessionClientFrame());
    if(sessionFrame is UserPullSessionServerFrame){
-     pullSessionDataToDB(sessionFrame.session, mapper);
+   await  pullSessionDataToDB(sessionFrame.session, mapper);
 
    }
  });
