@@ -1,6 +1,9 @@
 # ash_go
-通信客户端
-基本功能
+
+## 通信客户端
+
+### 基本功能
+
 设计与实现了一个基于dart事件循环的异步多线程(isolate)socket客户端，实现了对TCP流的TLV解码与控制字节读写的工具类
 
 保障功能
@@ -8,25 +11,19 @@
 断线重连
 定时发送Ping保活
 
-高级功能
+### 高级功能
+
 考虑异步多isolate多socket轮调，防止阻塞单个TCP流或isolate事件循环
+
+
+
+## 项目运行架构
 
 
 初次运行需要创建本用户数据库，并全量拉取用户数据，在运行过程中增量更新数据
 
 客户端渲染页面通常直接查询sqlite获取数据，一旦服务端有数据推送过来便先更新客户端数据库，再使用eventbus进行事件通知各个页面以进行刷新
 
+尽可能将访问数据库与访问后端获取数据的逻辑分离，即页面中获取数据通常如上面一点所述，数据库的数据则通过向后端拉取或推送过来以进行填充
 
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
