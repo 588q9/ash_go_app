@@ -5,6 +5,7 @@ import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 
 import '../models/po/message.dart';
+import '../models/vo/contact_message_vo.dart';
 abstract class ChatTitleInfo{
   String headUrl;
   String name;
@@ -59,11 +60,12 @@ class ChatPage extends StatelessWidget {
   List<InlineSpan> bottomBarSpan;
   PopupMenuButton<int> popupMenuButton;
 List<MessageDiagram> messageDigrams;
-
+ChatBottomBar chatBottomBar;
 
   ChatPage({required this.chatTitleInfo,required this.bottomBarSpan,required this.popupMenuButton
 
-  ,required this.messageDigrams
+  ,required this.messageDigrams,
+    required this.chatBottomBar
   });
 
   @override
@@ -75,7 +77,7 @@ List<MessageDiagram> messageDigrams;
         ],
         title:ChatTitle(chatTitleInfo: chatTitleInfo,bottomSpan: bottomBarSpan,) ,
       ),
-      body: ChatBody(list: messageDigrams,),
+      body: ChatBody(list: messageDigrams,chatBottomBar: chatBottomBar,),
     );
   }
 
@@ -112,27 +114,42 @@ class MessageView extends StatelessWidget {
 
 class ChatBody extends StatelessWidget {
   List<MessageDiagram> list;
-
+ChatBottomBar chatBottomBar;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [Expanded(child: MessageView(list: list,)), ChatBottomBar()],
+      children: [Expanded(child: MessageView(list: list,)), chatBottomBar],
     );
   }
 
-  ChatBody({required this.list});
+  ChatBody({required this.list,required this.chatBottomBar});
 
 
 }
+abstract class ChatBottomBarState<T extends ChatBottomBar> extends State<T>{
 
-class ChatBottomBar extends StatelessWidget {
-
+  final textMessageController = TextEditingController();
+bool canSendMessage=false;
+List<Widget> rightOtherButton=[];
+VoidCallback sendMessageCallback=(){};
+  @override
+  void initState() {
+    super.initState();
+    textMessageController.addListener(() {
+      String textContent=textMessageController.text;
+      setState(() {
+        canSendMessage=textContent.isNotEmpty;
+      });
+    });
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
+
+
     return BottomAppBar(
       child: Row(
         children: [
@@ -143,22 +160,37 @@ class ChatBottomBar extends StatelessWidget {
           Expanded(
             flex: 8,
             child: TextField(
+              textInputAction: TextInputAction.send,
+              controller: textMessageController,
               maxLines: null,
               decoration: InputDecoration(hintText: '发送消息'),
             ),
           ),
-          Expanded(child: Icon(Icons.attach_file), flex: 1),
-          Expanded(child: Icon(Icons.phone), flex: 1)
+
+          ...(canSendMessage?[
+
+            Expanded(flex: 1, child: IconButton( onPressed: sendMessageCallback, icon:Icon(Icons.send) ,))
+
+          ]:rightOtherButton)
+
         ],
       ),
     );
   }
 }
+abstract class ChatBottomBar extends StatefulWidget {
+  const ChatBottomBar({super.key});
+
+
+
+
+
+}
 
 
 abstract class MessageDiagram extends StatelessWidget {
-Message message;
-bool isMySent;
+final Message message;
+final bool isMySent;
 MessageDiagram({required this.message,this.isMySent=false });
 
   @override
@@ -178,18 +210,19 @@ MessageDiagram({required this.message,this.isMySent=false });
                     message.sendUserVO?.headUrl??DEFAULT_HEAD_URL),
               )),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
+              crossAxisAlignment:!isMySent?CrossAxisAlignment.start:CrossAxisAlignment.end,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 3),
                   child: Row(
                     children: [
                       Container(
-                          margin: EdgeInsets.only(right: 10),
+                          margin: const EdgeInsets.only(right: 10),
                           child: Text(
                             message.sendUserVO?.username!=null&&!isMySent?message.sendUserVO!.username!:'',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w500),
                           )),
                       Text(datestampToFormat('yyyy年MM月dd日 h:m', message.createTime) )
@@ -197,7 +230,7 @@ MessageDiagram({required this.message,this.isMySent=false });
                   ),
                 ),
                 Container(
-                  constraints: BoxConstraints(maxWidth: 280, minWidth: 70),
+                  constraints: const BoxConstraints(maxWidth: 280, minWidth: 70),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
@@ -205,25 +238,24 @@ MessageDiagram({required this.message,this.isMySent=false });
                           width: 0.5,
                           style: BorderStyle.solid),
                       borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                             color: Colors.black12,
                             blurRadius: 1,
                             offset: Offset(2, 2))
                       ]),
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Stack(children: [
                     SelectableText.rich(TextSpan(
                         children: [
                           TextSpan(text: message.textContent),
                         ],
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.black,
                         ))),
                   ]),
                 )
               ],
-              crossAxisAlignment:!isMySent?CrossAxisAlignment.start:CrossAxisAlignment.end,
             ),
           )
         ],

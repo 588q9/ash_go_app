@@ -54,19 +54,33 @@ return ChatPage(chatTitleInfo: groupChatInfo, bottomBarSpan: [
     PopupMenuItem(child: Text('离开群聊'))
   ];
 })
-    , messageDigrams: []);
+    , messageDigrams: [], chatBottomBar: GroupChatBottomBar(),);
   }
+}
+
+class GroupChatBottomBarState extends ChatBottomBarState<GroupChatBottomBar>{
+
+
+}
+
+class GroupChatBottomBar extends ChatBottomBar{
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
+
 }
 
 
 class GroupChatPage extends StatefulWidget{
-GroupChatInfo groupChatInfo;
+GroupChatInfo initGroupChatInfo;
 
 
-GroupChatPage(this.groupChatInfo);
+GroupChatPage(this.initGroupChatInfo);
 
   @override
   State createState() {
-    return GroupChatPageState(groupChatInfo: groupChatInfo);
+    return GroupChatPageState(groupChatInfo: initGroupChatInfo);
   }
 }

@@ -1,14 +1,16 @@
 
 
 
+import 'package:ash_go/common/enums/message_status.dart';
+import 'package:ash_go/common/enums/message_type.dart';
+import 'package:ash_go/common/protocol/frame/client/common_client_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
-import 'package:ash_go/models/po/message.dart';
 import 'package:ash_go/models/po/user.dart';
 import 'package:ash_go/models/vo/user_vo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/po/contact_message.dart';
+import '../../common/protocol/enums/packet_type.dart';
 import '../../models/vo/contact_message_vo.dart';
 import '../../routes/routes_container.dart';
 import '../chat_page.dart';
@@ -44,10 +46,12 @@ var mapList=(await  db.rawQuery('select * from contact_message a inner join mess
 var user=UserVO.fromJson( (await db.query(User.USER_TABLE,where: 'id=?',whereArgs: [userChatInfo.id]))[0]);
 
 var myUser=UserVO.fromJson((await db.query(User.USER_TABLE,where: 'id=?',whereArgs: [await UtilContainer.getLoginUserId(context)]))[0]);
-
+user.username='';
+myUser.username='';
 var contactMessages=mapList.map((e){
   var temp=ContactMessageVO.fromJson(e);
 if(temp.userId==user.id){
+
   temp.sendUserVO=user;
 
 }  else{
@@ -79,6 +83,10 @@ return contactMessages.toList();
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
     return
       ChatPage(chatTitleInfo: userChatInfo, bottomBarSpan: [
         TextSpan(text: userChatInfo.status??userChatInfo.onlineTime),
@@ -104,7 +112,14 @@ return contactMessages.toList();
           }), messageDigrams: messages.map((e) => UserMessageDigram(contactMessage: e,isMySent: e.receiveUserId==
             userChatInfo.id
             ,)).
-          toList()
+          toList(), chatBottomBar:UserChatBottomBar(
+            rightOtherButton: [Expanded(child: Icon(Icons.attach_file), flex: 1),
+
+              Expanded(child: Icon(Icons.phone), flex: 1)], initUserChatInfo: userChatInfo,
+
+        )
+
+        ,
 
 
       );
@@ -112,14 +127,56 @@ return contactMessages.toList();
   }
 }
 
+class UserChatBottomBarState extends ChatBottomBarState<UserChatBottomBar>{
+
+@override
+  initState(){
+    super.initState();
+  super.rightOtherButton=widget.rightOtherButton;
+    super.sendMessageCallback=(){
+      String textCotent=super.textMessageController.text;
+      UtilContainer.getMapper(context).then((value) async{
+        var message=ContactMessageVO(widget.initUserChatInfo.id,
+           await UtilContainer.getLoginUserId(context)
+            ,MessageType.TEXT.index,DateTime.now().millisecondsSinceEpoch
+            ,null,MessageStatus.SENDING.index,null,textCotent,null
+        );
+
+        UtilContainer.getClient(context).send(CommonClientFrame(packetType :PacketType.SEND_MESSAGE_TO_CONTACT,data:message.toJson())).then((value){});
+
+      });
+
+
+    };
+
+}
+
+}
+
+class UserChatBottomBar extends ChatBottomBar{
+final  List<Widget> rightOtherButton;
+
+final UserChatInfo initUserChatInfo;
+
+const UserChatBottomBar({super.key, required this.rightOtherButton,required this.initUserChatInfo});
+
+  @override
+  State<StatefulWidget> createState() {
+    return UserChatBottomBarState();
+  }
+
+
+}
+
+
 class UserChatPage extends StatefulWidget{
 
-  UserChatInfo userChatInfo;
+final  UserChatInfo initUserChatInfo;
 
-  UserChatPage(this.userChatInfo);
+  UserChatPage(this.initUserChatInfo);
 
   @override
   State createState() {
-    return UserChatPageState(userChatInfo);
+    return UserChatPageState(initUserChatInfo);
   }
 }
