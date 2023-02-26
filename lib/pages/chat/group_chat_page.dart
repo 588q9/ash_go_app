@@ -20,10 +20,10 @@ class GroupChatInfo extends ChatTitleInfo{
 
 
 
-class GroupMessageDigram extends MessageDiagram{
-  GroupMessageVO groupMessage;
+class GroupMessageDiagram extends MessageDiagram{
+ final GroupMessageVO groupMessage;
 
-  GroupMessageDigram({required this.groupMessage}) : super(message: groupMessage);
+ GroupMessageDiagram({required this.groupMessage}) : super(message: groupMessage);
 }
 
 

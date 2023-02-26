@@ -7,6 +7,7 @@ import 'package:ash_go/common/protocol/frame/client/common_client_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
 import 'package:ash_go/models/po/user.dart';
 import 'package:ash_go/models/vo/user_vo.dart';
+import 'package:ash_go/pages/overview_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,13 +30,30 @@ class UserMessageDigram extends MessageDiagram{
 
 }
 
+class UserChatPage extends StatefulWidget{
 
+  final  UserChatInfo initUserChatInfo;
+
+  const UserChatPage(this.initUserChatInfo, {super.key});
+
+  @override
+  State createState() {
+    return UserChatPageState();
+  }
+}
 
 class UserChatPageState extends State<UserChatPage>{
-  UserChatInfo userChatInfo;
+  UserChatInfo userChatInfo=UserChatInfo(onlineTime: '', headUrl: DEFAULT_HEAD_URL, name: '', id: '');
 List<ContactMessageVO> messages=[];
 
-  UserChatPageState(this.userChatInfo);
+  @override
+  void initState() {
+    super.initState();
+  userChatInfo=widget.initUserChatInfo;
+
+  }
+
+
 
 Future<List<ContactMessageVO>> loadUserMessage()async{
 
@@ -134,12 +152,12 @@ class UserChatBottomBarState extends ChatBottomBarState<UserChatBottomBar>{
     super.initState();
   super.rightOtherButton=widget.rightOtherButton;
     super.sendMessageCallback=(){
-      String textCotent=super.textMessageController.text;
+      String textContent=super.textMessageController.text;
       UtilContainer.getMapper(context).then((value) async{
         var message=ContactMessageVO(widget.initUserChatInfo.id,
            await UtilContainer.getLoginUserId(context)
             ,MessageType.TEXT.index,DateTime.now().millisecondsSinceEpoch
-            ,null,MessageStatus.SENDING.index,null,textCotent,null
+            ,null,MessageStatus.SENDING.index,null,textContent,null
         );
 
         UtilContainer.getClient(context).send(CommonClientFrame(packetType :PacketType.SEND_MESSAGE_TO_CONTACT,data:message.toJson())).then((value){});
@@ -169,14 +187,3 @@ const UserChatBottomBar({super.key, required this.rightOtherButton,required this
 }
 
 
-class UserChatPage extends StatefulWidget{
-
-final  UserChatInfo initUserChatInfo;
-
-  UserChatPage(this.initUserChatInfo);
-
-  @override
-  State createState() {
-    return UserChatPageState(initUserChatInfo);
-  }
-}
