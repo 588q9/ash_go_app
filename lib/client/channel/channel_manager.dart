@@ -1,9 +1,10 @@
 import 'dart:async';
-
 import 'dart:io';
-
 import 'dart:typed_data';
+import 'dart:ui';
 
+
+import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
 import 'package:ash_go/client/packet/origin_version_packet.dart';
 import 'package:ash_go/client/packet/packet.dart';
 import 'package:ash_go/common/protocol/enums/packet_type.dart';
@@ -12,17 +13,19 @@ import 'package:ash_go/common/protocol/enums/serialize_type.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:ash_go/common/util/byte_buf.dart';
-import 'package:ash_go/client/channel/origin_version_length_field_decoder.dart';
 import 'package:ash_go/common/util/json_serializer_util.dart';
 import 'package:async/async.dart';
 
 typedef Connected = void Function(ChannelManager channelManager);
-
+typedef VoidCallback = void Function();
 class ChannelManager {
   Socket? _channel;
-//TODO 放到配置文件中，并且注意安全问题
-  late String host ;
- late int port ;
+
+
+  late String host;
+
+
+  late int port;
 
   final _serializerUtil = const JsonSerializerUtil();
 
@@ -35,11 +38,12 @@ class ChannelManager {
           lengthField: OriginVersionPacket.LENGTH_FIELD_LENGTH,
           postLengthField: OriginVersionPacket.SERIES_ID_FIELD_LENGTH +
               OriginVersionPacket.SERIALIZE_TYPE_FIELD_LENGTH);
-  final Completer _connectState = Completer();
+   Completer<bool> _connectState = Completer();
 
   final serverFrameController = StreamController<ServerFrame>();
 
   late final serverFrameQueue;
+
   ServerFrame buildServerFrame(ByteBuf buf) {
     var magicNumber = buf.readInt();
     var version = ProtocolVersion.values[buf.readBtye()];
@@ -59,27 +63,67 @@ class ChannelManager {
     return serverFrame;
   }
 
-  ChannelManager(this.host,this.port,[Connected? connected]) {
+  ChannelManager(this.host, this.port, [Connected? connected,VoidCallback? reconnected,VoidCallback? connectError]) {
     serverFrameQueue = StreamQueue<ServerFrame>(serverFrameController.stream);
 
     _lengthFieldDecoder.packetProcess = (ByteBuf buf) {
       var serverFrame = buildServerFrame(buf);
       serverFrameController.add(serverFrame);
     };
+_connect(connected);
 
-    Socket.connect(host, port).then((value) {
+  }
+void _reconnect([VoidCallback? reconnect ,VoidCallback? connectError]){
+
+
+    _channel?.close();
+    _channel=null;
+
+  _connect(null,reconnect:reconnect,connectError:connectError);
+
+
+
+}
+
+
+  void _connect(Connected? connected,{VoidCallback? reconnect ,VoidCallback? connectError}){
+    Socket.connect(host, port,timeout: Duration(seconds: 20)).then((value) {
+
       _channel = value;
-      _connectState.complete();
+
+if(!_connectState.isCompleted){
+  _connectState.complete(true);
+
+}
       connected?.call(this);
 
       return value;
-    }).then((value) {
-      value.listen((event) {
+    }).then((sc) {
+
+      sc.listen((event) {
         _lengthFieldDecoder.collecting(event);
-      });
-    }).onError((error, stackTrace) {
-      _connectState.completeError(error!);
-    });
+      },
+
+          onDone: (){
+
+_reconnect(reconnect,connectError);
+
+        print('socket down');
+
+          }
+      );
+    },onError: (error, stackTrace) {
+      connectError?.call();
+
+      _reconnect(reconnect,connectError);
+     print(stackTrace);
+      print('socket connect error');
+
+
+
+
+    }
+    );
   }
 
   // void sendSingleSide(ClientFrame frame) async {
@@ -101,10 +145,14 @@ class ChannelManager {
     _channel!.add(sendData.takeBytes());
   }
 
-  void send(ClientFrame frame) async {
+  Future<void> send(ClientFrame frame) async {
     await _connectState.future;
 
-    _send(frame);
+  _send(frame);
+
+
+
+
   }
 
   ByteBuf buildPakcet(Uint8List contentData, PacketType packetType,

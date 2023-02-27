@@ -113,7 +113,17 @@ if(clientFrame==IsolateClient.CLOSE){
   manager.shutdown();
 break;
 }
-    manager.send(clientFrame);
+try{
+  manager.send(clientFrame).onError((error, stackTrace) {
+    print('socket 错误');
+    print(stackTrace);
+  });
+
+}on Exception catch(e){
+  print(e);
+
+}
+
     var serverFrameFuture = manager.serverFrameQueue.next;
 
     serverFrameFuture.then((value) {

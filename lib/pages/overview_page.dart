@@ -19,7 +19,7 @@ class DrawerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.format_list_bulleted),
+      icon: const Icon(Icons.format_list_bulleted),
       onPressed: () {
         Scaffold.of(context).openDrawer();
       },
@@ -38,7 +38,7 @@ class OverviewPage extends StatefulWidget {
 }
 
 
-final String  DEFAULT_HEAD_URL="https://gitee.com/assets/no_portrait.png";
+const String  DEFAULT_HEAD_URL="https://gitee.com/assets/no_portrait.png";
 
 
 class OverviewPageState extends State<OverviewPage> {
@@ -69,7 +69,7 @@ List<ChatItem> chatBriefList=[];
           var contactMessage=(await db.rawQuery('select * from contact_message a inner  join message b on a.messageClientId=b.id  where  b.userId=? or( b.userId=? and a.receiveUserId=?) order by createTime desc limit 1',[item.id
             ,await container.userId,item.id
           ]));
-          if(contactMessage.length>0){
+          if(contactMessage.isNotEmpty){
             contactMessageWrap=ContactMessageVO.fromJson(contactMessage[0]);
 
 
@@ -86,7 +86,7 @@ List<ChatItem> chatBriefList=[];
           ChatItem chatItem=ChatItem(item.id, false, item.headUrl, item.username, simpleMessage, 0);
 
 
-          this.chatBriefList.add(chatItem);
+          chatBriefList.add(chatItem);
         }
 
 
@@ -126,7 +126,7 @@ List<ChatItem> chatBriefList=[];
                     padding: const EdgeInsets.only(top: 16),
                     child: Text(
                       userInfo.username ?? '',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   )
                 ],
@@ -210,7 +210,7 @@ class ChatDigram extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.only(bottom: 5),
+                  margin: const EdgeInsets.only(bottom: 5),
                   child: Text(
                       style:
                       const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
@@ -233,13 +233,13 @@ class ChatDigram extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                  chatItem.latestMessage!=null?
                   datestampToFormat('yy-M-d H:m',chatItem.latestMessage!.createTime):''
                    ,
                 ),
                 chatItem.unReadCount>0?ChatUnReadTip(count: chatItem.unReadCount)
-                    :SizedBox()
+                    :const SizedBox()
               ],
             )
           ],

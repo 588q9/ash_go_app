@@ -160,7 +160,9 @@ class UserChatBottomBarState extends ChatBottomBarState<UserChatBottomBar>{
             ,null,MessageStatus.SENDING.index,null,textContent,null
         );
 
-        UtilContainer.getClient(context).send(CommonClientFrame(packetType :PacketType.SEND_MESSAGE_TO_CONTACT,data:message.toJson())).then((value){});
+        UtilContainer.getClient(context).send(CommonClientFrame(packetType :PacketType.SEND_MESSAGE_TO_CONTACT,data:{
+          'contactMessage':
+          message.toJson()})).then((value){});
 
       });
 

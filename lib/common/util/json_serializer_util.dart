@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:ash_go/common/protocol/enums/packet_type.dart';
 import 'package:ash_go/common/protocol/enums/serialize_type.dart';
 import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/common_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/exception_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/pong_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
@@ -21,7 +22,8 @@ class JsonSerializerUtil extends SerializerUtil<JsonSerializer> {
     ExceptionServerFrame.PACKET_TYPE:ExceptionServerFrame.fromJson,
     UserLoginServerFrame.PACKET_TYPE:UserLoginServerFrame.fromJson,
     UserInfoServerFrame.PACKET_TYPE:UserInfoServerFrame.fromJson,
-    UserPullSessionServerFrame.PACKET_TYPE:UserPullSessionServerFrame.fromJson
+    UserPullSessionServerFrame.PACKET_TYPE:UserPullSessionServerFrame.fromJson,
+    CommonServerFrame.PACKET_TYPE:CommonServerFrame.fromJson
   };
 
 const JsonSerializerUtil();
