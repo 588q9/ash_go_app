@@ -8,11 +8,11 @@ part of 'login_token.dart';
 
 LoginToken _$LoginTokenFromJson(Map<String, dynamic> json) => LoginToken(
       json['token'] as String,
-      json['id'] as String?,
+      json['userId'] as String?,
     );
 
 Map<String, dynamic> _$LoginTokenToJson(LoginToken instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'userId': instance.userId,
       'token': instance.token,
     };

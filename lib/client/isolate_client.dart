@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:ash_go/client/channel/channel_manager.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/exception_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:async/async.dart';
+typedef VoidCallback = void Function();
 
 //TODO 对服务端主动推送的frame处理
 class IsolateClient {
@@ -18,22 +21,35 @@ late int port;
   final Completer<SendPort> _sendRunningFuture = Completer();
 
   final seriesIds = SeriesIdInteger(0);
+VoidCallback? reconnected;
 
   //TODO 超时丢弃，并且报超时错误给future,或者进行重传，多次失败后报错
-  final _serverFrameMap = <int, Completer<dynamic>>{};
+  final _serverFrameMap = <int, Completer<ServerFrame>>{};
   //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
   final serverPush = <ServerFrame>[];
-  late Timer _sendPingtimer;
+     Timer? _sendPingtimer;
 
-  IsolateClient(this.host,this.port) {
+  IsolateClient(this.host,this.port,{this.reconnected}) {
     _sendMain = _receiveMain.sendPort;
     // _events = StreamQueue(_receiveMain);
 
     _init();
+    _keepAlive();
+  }
+void _stopKeepAlive(){
+
+
+    _sendPingtimer?.cancel();
+
+}
+  void _keepAlive(){
+
+_sendPingtimer?.cancel();
     _sendPingtimer = Timer.periodic(const Duration(seconds: 60), (timer) {
       var pingClientFrame = PingClientFrame();
 
       send(pingClientFrame).then((value) {
+
         //TODO Pong处理
         // print(value);
       });
@@ -43,24 +59,50 @@ late int port;
   void _init() async {
     ReceivePort receivePort = ReceivePort();
     _running = await Isolate.spawn(_run, [receivePort.sendPort, _sendMain]);
-
-    // var sendRunning = await _events.next;
+    //TODO "Software caused connection abort: socket write error"问题，目前只能重启整个isolate解决
+//     var errorPort=ReceivePort();
+//     errorPort.listen((message) {
+//      print((message[0] as SocketException));
+//     });
+// _running.addErrorListener(errorPort.sendPort);
     SendPort sendRunning = await receivePort.first;
     receivePort.close();
     sendRunning.send([host,port]);
     _sendRunningFuture.complete(sendRunning);
 
     _receiveMain.listen((serverFrame) {
+
+       if(serverFrame is ReconnectedServerFrame){
+      reconnected?.call();
+      _keepAlive();
+      return;
+      }else if(serverFrame is DisconnectServerFrame){
+         _stopKeepAlive();
+         return;
+       }
+
+
       if (serverFrame.seriesId == SeriesIdInteger.ALONE_PACKET_SERIES_ID) {
-        //TODO 需要寻找正确的服务端推送消息处理器,考虑使用StreamTransformer或StreamController
+
+
         print('server push,store to list');
+        //TODO 需要寻找正确的服务端推送消息处理器,考虑使用StreamTransformer或StreamController
 
         serverPush.add(serverFrame);
         print(serverPush);
         return;
       }
+if(serverFrame is ExceptionServerFrame){
+  _serverFrameMap[serverFrame.seriesId]?.completeError(Exception(serverFrame.errorMessage));
 
-      _serverFrameMap[serverFrame.seriesId]!.complete(serverFrame);
+
+}
+else{
+  _serverFrameMap[serverFrame.seriesId]?.complete(serverFrame);
+
+}
+
+
       _serverFrameMap.remove(serverFrame.seriesId);
     });
   }
@@ -71,12 +113,12 @@ late int port;
     sendRunning.send(frame);
   }
 
-  Future<dynamic> send(ClientFrame clientFrame) async {
+  Future<ServerFrame> send(ClientFrame clientFrame) async {
     clientFrame.seriesId = seriesIds.getAndIncrement();
     var sendRunning = await _sendRunningFuture.future;
 
     sendRunning.send(clientFrame);
-    var completer = Completer();
+    var completer = Completer<ServerFrame>();
 
     _serverFrameMap[clientFrame.seriesId] = completer;
 
@@ -97,6 +139,8 @@ sendRunning.send(CLOSE);
 //TODO 考虑将_run方法做成多isolate多channelmanager轮流使用或者的模型，切换isolate轮流对channelmanager进行发送
 
 void _run(List<SendPort> sendMain) async {
+
+
   ReceivePort receiveRunning = ReceivePort();
   sendMain[0].send(receiveRunning.sendPort);
 
@@ -106,29 +150,34 @@ void _run(List<SendPort> sendMain) async {
   ChannelManager manager = ChannelManager(socketInfo[0],socketInfo[1]);
 
   sendMain.removeAt(0);
+  manager.serverFrameController.stream.listen((event) {
+
+    Timer(Duration(microseconds: 200),(){
+      sendMain[0].send(event);
+
+    });
+  });
   while (true) {
+
     //TODO 处理异常情况
     var clientFrame = await runningEvents.next;
+
 if(clientFrame==IsolateClient.CLOSE){
   manager.shutdown();
 break;
 }
-try{
+
+
   manager.send(clientFrame).onError((error, stackTrace) {
-    print('socket 错误');
+
+print('occur exception!');
     print(stackTrace);
   });
 
-}on Exception catch(e){
-  print(e);
 
-}
 
-    var serverFrameFuture = manager.serverFrameQueue.next;
 
-    serverFrameFuture.then((value) {
-      sendMain[0].send(value);
-    });
+
   }
 }
 //每个channelManager对象应当只有一个seriesid生成器

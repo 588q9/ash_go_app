@@ -6,8 +6,9 @@
 
 设计与实现了一个基于dart事件循环的异步多线程(isolate)socket客户端，实现了对TCP流的TLV解码的channelmanager与控制字节读写的工具类bytebuf
 
-保障功能
-超时重传
+### 保障功能
+
+~~超时重传~~
 断线重连
 定时发送Ping保活
 

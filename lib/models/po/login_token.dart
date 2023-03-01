@@ -7,10 +7,10 @@ part 'login_token.g.dart';
 class LoginToken{
   static final LOGIN_TOKEN_TABLE="login_token";
 
-String ?id;
+String ?userId;
 
 String token;
-LoginToken(this.token,[this.id]);
+LoginToken(this.token,[this.userId]);
 
   factory LoginToken.fromJson(Map<String, dynamic> json) => _$LoginTokenFromJson(json);
   Map<String, dynamic> toJson() => _$LoginTokenToJson(this);  

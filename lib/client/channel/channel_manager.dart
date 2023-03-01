@@ -17,14 +17,42 @@ import 'package:ash_go/common/util/json_serializer_util.dart';
 import 'package:async/async.dart';
 
 typedef Connected = void Function(ChannelManager channelManager);
-typedef VoidCallback = void Function();
+//内部用途，外部不应使用
+class ReconnectedServerFrame extends ServerFrame{
+  @override
+  PacketType getPacketType() {
+    // TODO: implement getPacketType
+    throw UnimplementedError();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
+
+}
+class DisconnectServerFrame extends ServerFrame{
+  @override
+  PacketType getPacketType() {
+    // TODO: implement getPacketType
+    throw UnimplementedError();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    // TODO: implement toJson
+    throw UnimplementedError();
+  }
+
+}
+
 class ChannelManager {
   Socket? _channel;
 
-
   late String host;
-
-
+bool isClose=false;
+bool _needReconnect=false;
   late int port;
 
   final _serializerUtil = const JsonSerializerUtil();
@@ -42,7 +70,7 @@ class ChannelManager {
 
   final serverFrameController = StreamController<ServerFrame>();
 
-  late final serverFrameQueue;
+  // late final StreamQueue<ServerFrame> serverFrameQueue;
 
   ServerFrame buildServerFrame(ByteBuf buf) {
     var magicNumber = buf.readInt();
@@ -63,8 +91,8 @@ class ChannelManager {
     return serverFrame;
   }
 
-  ChannelManager(this.host, this.port, [Connected? connected,VoidCallback? reconnected,VoidCallback? connectError]) {
-    serverFrameQueue = StreamQueue<ServerFrame>(serverFrameController.stream);
+  ChannelManager(this.host, this.port, [Connected? connected]) {
+    // serverFrameQueue = StreamQueue<ServerFrame>(serverFrameController.stream);
 
     _lengthFieldDecoder.packetProcess = (ByteBuf buf) {
       var serverFrame = buildServerFrame(buf);
@@ -73,26 +101,43 @@ class ChannelManager {
 _connect(connected);
 
   }
-void _reconnect([VoidCallback? reconnect ,VoidCallback? connectError]){
+void _reconnect(){
 
-
-    _channel?.close();
+if(_channel!=null||_connectState.isCompleted&&_channel==null){
+  serverFrameController.add(DisconnectServerFrame());
+}
     _channel=null;
+if(isClose){
+  return;
+}
 
-  _connect(null,reconnect:reconnect,connectError:connectError);
+
+Timer(Duration(seconds: 12), () {
+
+  _connect(null);
+});
+
 
 
 
 }
 
 
-  void _connect(Connected? connected,{VoidCallback? reconnect ,VoidCallback? connectError}){
-    Socket.connect(host, port,timeout: Duration(seconds: 20)).then((value) {
+  void _connect(Connected? connected){
 
+
+    Socket.connect(host, port,timeout: Duration(seconds: 25)).then((value) {
+      _needReconnect=false;
       _channel = value;
 
 if(!_connectState.isCompleted){
   _connectState.complete(true);
+
+}else{
+
+  serverFrameController.add(ReconnectedServerFrame());
+
+
 
 }
       connected?.call(this);
@@ -100,30 +145,31 @@ if(!_connectState.isCompleted){
       return value;
     }).then((sc) {
 
-      sc.listen((event) {
+sc.listen((event) {
         _lengthFieldDecoder.collecting(event);
       },
 
           onDone: (){
+            _needReconnect=true;
 
-_reconnect(reconnect,connectError);
+_reconnect();
 
         print('socket down');
 
-          }
+          },
       );
-    },onError: (error, stackTrace) {
-      connectError?.call();
+    }
+    ).onError((error, stackTrace) {
+      _needReconnect=true;
 
-      _reconnect(reconnect,connectError);
-     print(stackTrace);
+      _reconnect();
+      print(stackTrace);
       print('socket connect error');
 
 
 
 
-    }
-    );
+    });
   }
 
   // void sendSingleSide(ClientFrame frame) async {
@@ -143,6 +189,7 @@ _reconnect(reconnect,connectError);
         frame.seriesId, _serializerUtil.getSerializeType());
 
     _channel!.add(sendData.takeBytes());
+    _channel!.flush();
   }
 
   Future<void> send(ClientFrame frame) async {
@@ -171,7 +218,7 @@ _reconnect(reconnect,connectError);
 
 //TODO socket对象连接情况也要检查
   get isConnected {
-    return _channel != null;
+    return _channel != null||!_needReconnect;
   }
 
   void _vaildConnected() {
@@ -181,6 +228,7 @@ _reconnect(reconnect,connectError);
   }
 
   Future<dynamic> shutdown() async {
+    isClose=true;
     _vaildConnected();
 
     return _channel?.close();

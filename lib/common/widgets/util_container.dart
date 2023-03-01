@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:ash_go/client/isolate_client.dart';
 import 'package:ash_go/common/database/mapper.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
+import 'package:ash_go/common/protocol/frame/client/user/user_login_client_frame.dart';
+import 'package:ash_go/models/po/login_token.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yaml/yaml.dart';
+
+import '../protocol/frame/server/user/user_login_server_frame.dart';
 
 class AppUtil{
   ConnectClient? client;
@@ -45,9 +49,39 @@ static ConnectClient getClient(BuildContext context){
 
 connect(){
   _util??=AppUtil();
-  _util!.client ??= ConnectClient(_util!.configuration.future);
+  _util!.client ??= ConnectClient(_util!.configuration.future,reconnected: reAuthentication
+
+  );
 
 }
+reAuthentication(){
+  _util?.mapper?.then((db)async{
+    var tokens= await db.query(LoginToken.LOGIN_TOKEN_TABLE);
+
+    if(tokens.length>0){
+
+      print('user reAuthentication ');
+
+      _util!.client!.send(UserLoginClientFrame(token: LoginToken.fromJson(tokens.first).token)).then((value) {
+        if(value is UserLoginServerFrame){
+          _util!.mapper!.then((db) async{
+            db.insert(LoginToken.LOGIN_TOKEN_TABLE, LoginToken(value.token,await userId).toJson()
+                ,conflictAlgorithm: ConflictAlgorithm.replace
+            );
+          }).onError((error, stackTrace) {
+            print(error);
+            print('reauth error');
+          });
+        }
+
+      });
+
+    }
+
+  });
+
+}
+
 successAuthentication(String userId){
   _util!.mapperMetaInfo??=Mapper(userId);
    _util!.mapper??= _util!.mapperMetaInfo!.mapper;
@@ -85,13 +119,14 @@ ConnectClient get client{
 
 class ConnectClient {
   final Completer<IsolateClient> _clientCompleter = Completer();
+VoidCallback? reconnected;
+  ConnectClient(Future config,{this.reconnected}) {
 
-  ConnectClient(Future config) {
     _init(config);
   }
   _init(Future config) async {
     var map=await config;
-    var client = IsolateClient(map['host'], map['port']);
+    var client = IsolateClient(map['host'], map['port'],reconnected: reconnected);
     _clientCompleter.complete(client);
   }
 
