@@ -28,6 +28,7 @@ class SendContactMessageEvent{
 }
 class MessageStatusUpdateEvent{
 
+
 }
 
   class UserChatInfo extends ChatTitleInfo{
@@ -59,7 +60,7 @@ class UserChatPageState extends State<UserChatPage>{
   UserChatInfo userChatInfo=UserChatInfo(onlineTime: '', headUrl: DEFAULT_HEAD_URL, name: '', id: '');
 List<ContactMessageVO> messages=[];
   StreamSubscription<SendContactMessageEvent>? _sendMessageEventController;
-
+  StreamSubscription<MessageStatusUpdateEvent>? _messageStatusUpdateEventController;
   @override
   void initState() {
     super.initState();
@@ -119,7 +120,7 @@ return contactMessages.toList();
 
     });
   }).then((value) {
-    UtilContainer.getEventBus(context).on<MessageStatusUpdateEvent>().listen((event) {
+    _messageStatusUpdateEventController=UtilContainer.getEventBus(context).on<MessageStatusUpdateEvent>().listen((event) {
       setState(() {
 
       });
@@ -137,6 +138,7 @@ return contactMessages.toList();
 
   @override
   Widget build(BuildContext context) {
+
 
 
 
@@ -208,16 +210,16 @@ super.textMessageController.text='';
       'contactMessage':
       message.toJson()})).then((value){
         value as CommonServerFrame;
-        ContactMessageVO contactMessageVO=ContactMessageVO.fromJson(value.data!['message']) ;
-        contactMessageVO.clientId=messageClientId;
-        Message message=Message.fromJson(contactMessageVO.toJson());
+        ContactMessageVO contactMessageVOHaveId=ContactMessageVO.fromJson(value.data!['message']) ;
+        contactMessageVOHaveId.clientId=messageClientId;
+        Message message=Message.fromJson(contactMessageVOHaveId.toJson());
         message.messageStatus=MessageStatus.SENT.index;
         contactMessageVO.messageStatus=MessageStatus.SENT.index;
         UtilContainer.getMapper(context).then((db)async {
           ContactMessage contactMessage=ContactMessage();
           contactMessage.messageClientId=messageClientId;
-          contactMessage.receiveUserId=contactMessageVO.receiveUserId;
-          contactMessage.messageId=contactMessageVO.id;
+          contactMessage.receiveUserId=contactMessageVOHaveId.receiveUserId;
+          contactMessage.messageId=contactMessageVOHaveId.id;
          db.transaction((txn) {
             txn.update(ContactMessage.CONTACT_MESSAGE_TABLE, contactMessage.toJson(),where: 'messageClientId=?',
                 whereArgs: [messageClientId]
