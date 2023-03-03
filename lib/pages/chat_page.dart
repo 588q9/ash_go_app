@@ -1,3 +1,4 @@
+import 'package:ash_go/common/enums/message_status.dart';
 import 'package:ash_go/common/util/date_util.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
 import 'package:ash_go/pages/overview_page.dart';
@@ -218,6 +219,7 @@ MessageDiagram({required this.message,this.isMySent=false });
                   padding: const EdgeInsets.symmetric(vertical: 3),
                   child: Row(
                     children: [
+
                       Container(
                           margin: const EdgeInsets.only(right: 10),
                           child: Text(
@@ -229,31 +231,45 @@ MessageDiagram({required this.message,this.isMySent=false });
                     ],
                   ),
                 ),
-                Container(
-                  constraints: const BoxConstraints(maxWidth: 280, minWidth: 70),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                          color: Color.fromARGB(179, 201, 193, 193),
-                          width: 0.5,
-                          style: BorderStyle.solid),
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 1,
-                            offset: Offset(2, 2))
+
+
+                Row(
+                  children: [
+
+                  isMySent?statusIndicator(message.messageStatus):
+                  const SizedBox(
+
+                    child: null,
+                  )
+                  ,
+                    Container(
+                      margin: EdgeInsets.only(left: 5),
+                      constraints: const BoxConstraints(maxWidth: 280, minWidth: 70),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                              color: Color.fromARGB(179, 201, 193, 193),
+                              width: 0.5,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 1,
+                                offset: Offset(2, 2))
+                          ]),
+                      padding: const EdgeInsets.all(10),
+                      child: Stack(children: [
+                        SelectableText.rich(TextSpan(
+                            children: [
+                              TextSpan(text: message.textContent),
+                            ],
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ))),
                       ]),
-                  padding: const EdgeInsets.all(10),
-                  child: Stack(children: [
-                    SelectableText.rich(TextSpan(
-                        children: [
-                          TextSpan(text: message.textContent),
-                        ],
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ))),
-                  ]),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -262,4 +278,27 @@ MessageDiagram({required this.message,this.isMySent=false });
       ),
     );
   }
+
+
+  Widget statusIndicator(int? status){
+
+    var child;
+if(status==MessageStatus.FAIL_SEND.index){
+   child= const Icon(Icons.error,color: Colors.red);
+}
+else if(status==MessageStatus.SENDING.index){
+  child= CircularProgressIndicator(
+    backgroundColor: Colors.grey[200],
+    valueColor: const AlwaysStoppedAnimation(Colors.blue),
+  );
+}
+return   SizedBox(
+  width: 20,
+  height: 20,
+  child: child,
+);
+}
+
+
+
 }

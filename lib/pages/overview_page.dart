@@ -1,4 +1,5 @@
 import 'package:ash_go/common/protocol/frame/client/user/user_info_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/user/user_info_server_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
 import 'package:ash_go/models/po/contact_message.dart';
 import 'package:ash_go/models/po/message.dart';
@@ -52,6 +53,7 @@ List<ChatItem> chatBriefList=[];
     UtilContainer? container=UtilContainer.of(context);
     container!.client.send(UserInfoClientFrame()).then((value) {
       setState(() {
+        value as UserInfoServerFrame;
         userInfo = value.user;
         UtilContainer.of(context)!.mapper.then((value) {
           value.insert(User.USER_TABLE, userInfo.toJson(),conflictAlgorithm: ConflictAlgorithm.replace);
@@ -66,7 +68,7 @@ List<ChatItem> chatBriefList=[];
         for(var item in users){
           ContactMessageVO? contactMessageWrap;
           SimpleMessage? simpleMessage;
-          var contactMessage=(await db.rawQuery('select * from contact_message a inner  join message b on a.messageClientId=b.id  where  b.userId=? or( b.userId=? and a.receiveUserId=?) order by createTime desc limit 1',[item.id
+          var contactMessage=(await db.rawQuery('select * from contact_message a inner  join message b on a.messageClientId=b.clientId  where  b.userId=? or( b.userId=? and a.receiveUserId=?) order by createTime desc limit 1',[item.id
             ,await container.userId,item.id
           ]));
           if(contactMessage.isNotEmpty){

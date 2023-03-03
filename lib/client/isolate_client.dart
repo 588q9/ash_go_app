@@ -160,6 +160,7 @@ void _run(List<SendPort> sendMain) async {
   while (true) {
 
     //TODO 处理异常情况
+    //TODO 断线了应该暂停放入队列中
     var clientFrame = await runningEvents.next;
 
 if(clientFrame==IsolateClient.CLOSE){

@@ -20,10 +20,7 @@ ContactMessageVO(
 super.createTime,[super.id,super.messageStatus,super.clientId,super.textContent,super.extensionContent]
   );
 
-@override
-  String toString() {
-    return 'ContactMessageVO{receiveUserId: $receiveUserId}';
-  }
+
 
   factory ContactMessageVO.fromJson(Map<String, dynamic> json) => _$ContactMessageVOFromJson(json);
   Map<String, dynamic> toJson() => _$ContactMessageVOToJson(this);  

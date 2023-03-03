@@ -4,7 +4,9 @@ import 'package:ash_go/client/isolate_client.dart';
 import 'package:ash_go/common/database/mapper.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/user/user_login_client_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:ash_go/models/po/login_token.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
@@ -35,6 +37,12 @@ class UtilContainer extends InheritedWidget {
     required Widget child,
   }) : super(key: key, child: child);
 AppUtil? _util;
+ final EventBus eventBus = EventBus();
+
+ static EventBus getEventBus(BuildContext context){
+   return UtilContainer.of(context)!.eventBus;
+
+ }
 static ConnectClient getClient(BuildContext context){
   return UtilContainer.of(context)!.client;
 
@@ -130,7 +138,7 @@ VoidCallback? reconnected;
     _clientCompleter.complete(client);
   }
 
-  Future<dynamic> send(ClientFrame clientFrame) async {
+  Future<ServerFrame> send(ClientFrame clientFrame) async {
     IsolateClient client = await _clientCompleter.future;
     return client.send(clientFrame);
   }

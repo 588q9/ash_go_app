@@ -1,6 +1,6 @@
 enum MessageType{
 
-    BINARY,TEXT
+    TEXT, FILE, PHOTO, VIDEO, AUDIO, VIDEO_CALL, AUDIO_CALL;
 
 
 }
