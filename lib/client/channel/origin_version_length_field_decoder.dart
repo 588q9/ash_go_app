@@ -29,10 +29,10 @@ class OriginVersionLengthFieldDecoder {
       var tempBytes = packet.takeBytes();
 
       tempBytes = Uint8List.sublistView(tempBytes, headerLength);
-      print(tempBytes);
+      // print(tempBytes);
 
       String jsonStr = utf8.decode(tempBytes);
-      print(jsonStr);
+      // print(jsonStr);
     };
   }
 

@@ -7,6 +7,5 @@ abstract class PushServerFrame extends ServerFrame{
 
      int pushSeriesId=  SeriesIdInteger.ALONE_PACKET_SERIES_ID;
 
-  
-
+     PushServerFrame({required this.pushSeriesId});
 }

@@ -128,6 +128,11 @@ ConnectClient get client{
 class ConnectClient {
   final Completer<IsolateClient> _clientCompleter = Completer();
 VoidCallback? reconnected;
+
+
+
+
+
   ConnectClient(Future config,{this.reconnected}) {
 
     _init(config);
@@ -135,6 +140,7 @@ VoidCallback? reconnected;
   _init(Future config) async {
     var map=await config;
     var client = IsolateClient(map['host'], map['port'],reconnected: reconnected);
+    //TODO 服务端主动推送处理方法
     _clientCompleter.complete(client);
   }
 

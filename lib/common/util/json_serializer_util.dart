@@ -7,6 +7,7 @@ import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/common_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/exception_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/pong_server_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/push/push_contact_message_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/user/user_info_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/user/user_login_server_frame.dart';
@@ -23,7 +24,8 @@ class JsonSerializerUtil extends SerializerUtil<JsonSerializer> {
     UserLoginServerFrame.PACKET_TYPE:UserLoginServerFrame.fromJson,
     UserInfoServerFrame.PACKET_TYPE:UserInfoServerFrame.fromJson,
     UserPullSessionServerFrame.PACKET_TYPE:UserPullSessionServerFrame.fromJson,
-    CommonServerFrame.PACKET_TYPE:CommonServerFrame.fromJson
+    CommonServerFrame.PACKET_TYPE:CommonServerFrame.fromJson,
+    PushContactMessageServerFrame.PACKET_TYPE:PushContactMessageServerFrame.fromJson
   };
 
 const JsonSerializerUtil();

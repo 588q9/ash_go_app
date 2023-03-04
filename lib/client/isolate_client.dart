@@ -6,6 +6,7 @@ import 'package:ash_go/client/channel/channel_manager.dart';
 import 'package:ash_go/common/protocol/frame/client/client_frame.dart';
 import 'package:ash_go/common/protocol/frame/client/ping_client_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/exception_server_frame.dart';
+import 'package:ash_go/common/protocol/frame/server/push/push_server_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/server_frame.dart';
 import 'package:async/async.dart';
 typedef VoidCallback = void Function();
@@ -27,6 +28,7 @@ VoidCallback? reconnected;
   final _serverFrameMap = <int, Completer<ServerFrame>>{};
   //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
   final serverPush = <ServerFrame>[];
+final StreamController<PushServerFrame> serverPushContainer=StreamController();
      Timer? _sendPingtimer;
 
   IsolateClient(this.host,this.port,{this.reconnected}) {
@@ -89,6 +91,7 @@ _sendPingtimer?.cancel();
         //TODO 需要寻找正确的服务端推送消息处理器,考虑使用StreamTransformer或StreamController
 
         serverPush.add(serverFrame);
+serverPushContainer.add(serverFrame);
         print(serverPush);
         return;
       }
@@ -160,7 +163,7 @@ void _run(List<SendPort> sendMain) async {
   while (true) {
 
     //TODO 处理异常情况
-    //TODO 断线了应该暂停放入队列中
+    //TODO 断线了应该暂停放入队列
     var clientFrame = await runningEvents.next;
 
 if(clientFrame==IsolateClient.CLOSE){

@@ -22,6 +22,8 @@ CommonServerFrame({this.data});
   @override
   Map<String, dynamic> toJson() => _$CommonServerFrameToJson(this);
 
-
-
+@override
+  String toString() {
+    return 'CommonServerFrame{data: $data}';
+  }
 }

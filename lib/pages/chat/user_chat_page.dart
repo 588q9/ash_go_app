@@ -75,6 +75,7 @@ List<ContactMessageVO> messages=[];
   void dispose() {
     super.dispose();
 _sendMessageEventController?.cancel();
+_messageStatusUpdateEventController?.cancel();
 
   }
 
@@ -210,7 +211,7 @@ super.textMessageController.text='';
       'contactMessage':
       message.toJson()})).then((value){
         value as CommonServerFrame;
-        ContactMessageVO contactMessageVOHaveId=ContactMessageVO.fromJson(value.data!['message']) ;
+        ContactMessageVO contactMessageVOHaveId=ContactMessageVO.fromJson(value.data!['mySendContactMessage']) ;
         contactMessageVOHaveId.clientId=messageClientId;
         Message message=Message.fromJson(contactMessageVOHaveId.toJson());
         message.messageStatus=MessageStatus.SENT.index;
