@@ -63,9 +63,7 @@ static ConnectClient getClient(BuildContext context){
   }
 
   initServerPushHandler(){
-   if(_serverPushHandler.length>0){
-     return;
-   }
+
 
    _serverPushHandler[PacketType.PUSH_OTHER_USER_CONTACT_MESSAGE]=(PushServerFrame serverFrame){
       serverFrame as PushContactMessageServerFrame;
