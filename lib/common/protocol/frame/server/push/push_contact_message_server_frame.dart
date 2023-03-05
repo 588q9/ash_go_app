@@ -27,4 +27,8 @@ class PushContactMessageServerFrame extends PushServerFrame{
   @override
   Map<String, dynamic> toJson() => _$PushContactMessageServerFrameToJson(this);
 
+  @override
+  String toString() {
+    return 'PushContactMessageServerFrame{contactMessage: $contactMessage}';
+  }
 }

@@ -75,6 +75,7 @@ List<ContactMessageVO> messages=[];
   void dispose() {
     super.dispose();
 _sendMessageEventController?.cancel();
+
 _messageStatusUpdateEventController?.cancel();
 
   }

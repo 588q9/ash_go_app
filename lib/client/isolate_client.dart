@@ -26,8 +26,8 @@ VoidCallback? reconnected;
 
   //TODO 超时丢弃，并且报超时错误给future,或者进行重传，多次失败后报错
   final _serverFrameMap = <int, Completer<ServerFrame>>{};
-  //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
-  final serverPush = <ServerFrame>[];
+    //TODO 需要寻找正确的服务端推送消息处理器，并且要发送确认frame
+
 final StreamController<PushServerFrame> serverPushContainer=StreamController();
      Timer? _sendPingtimer;
 
@@ -85,14 +85,8 @@ _sendPingtimer?.cancel();
 
 
       if (serverFrame.seriesId == SeriesIdInteger.ALONE_PACKET_SERIES_ID) {
-
-
-        print('server push,store to list');
-        //TODO 需要寻找正确的服务端推送消息处理器,考虑使用StreamTransformer或StreamController
-
-        serverPush.add(serverFrame);
 serverPushContainer.add(serverFrame);
-        print(serverPush);
+
         return;
       }
 if(serverFrame is ExceptionServerFrame){

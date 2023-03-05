@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ash_go/common/protocol/frame/client/user/user_info_client_frame.dart';
 import 'package:ash_go/common/protocol/frame/server/user/user_info_server_frame.dart';
 import 'package:ash_go/common/widgets/util_container.dart';
@@ -8,6 +10,7 @@ import 'package:ash_go/models/po/user_contacts.dart';
 import 'package:ash_go/models/vo/contact_message_vo.dart';
 import 'package:ash_go/models/vo/user_contact_vo.dart';
 import 'package:ash_go/models/vo/user_vo.dart';
+import 'package:ash_go/pages/chat/user_chat_page.dart';
 import 'package:ash_go/routes/routes_container.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -45,12 +48,30 @@ const String  DEFAULT_HEAD_URL="https://gitee.com/assets/no_portrait.png";
 class OverviewPageState extends State<OverviewPage> {
   UserVO userInfo=UserVO();
 List<ChatItem> chatBriefList=[];
+ StreamSubscription<SendContactMessageEvent>? _contactMessageReceiveSubscription;
 
+
+  @override
+  void initState() {
+    super.initState();
+  _contactMessageReceiveSubscription?.cancel();
+
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+
+
     UtilContainer? container=UtilContainer.of(context);
+    container?.initServerPushHandler();
+    _contactMessageReceiveSubscription=container?.eventBus.on<SendContactMessageEvent>().listen((event) {
+      print('overview push');
+      print(event);
+
+    });
+
     container!.client.send(UserInfoClientFrame()).then((value) {
       setState(() {
         value as UserInfoServerFrame;
@@ -106,6 +127,9 @@ List<ChatItem> chatBriefList=[];
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       drawer: Drawer(
         child: ListView(

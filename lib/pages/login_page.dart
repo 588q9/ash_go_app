@@ -191,6 +191,7 @@ void loginOrRegisterLogic(ClientFrame frame, BuildContext context) {
     if (value is UserLoginServerFrame) {
       utilContainer.successAuthentication(value.userId);
       var mapper = await utilContainer.mapper;
+      utilContainer.initServerPushHandler();
 
  await utilContainer.mapperMetaInfo.isFirstCreateDb.future.then((value)async {
    if(!value){
@@ -198,6 +199,7 @@ void loginOrRegisterLogic(ClientFrame frame, BuildContext context) {
    }
    var sessionFrame=await utilContainer.client.send(UserPullSessionClientFrame());
    if(sessionFrame is UserPullSessionServerFrame){
+
    await  pullSessionDataToDB(sessionFrame.session, mapper);
 
    }
